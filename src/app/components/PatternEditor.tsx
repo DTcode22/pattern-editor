@@ -6,13 +6,85 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 
-const PatternEditor = () => {
-  const [selectedPattern, setSelectedPattern] = useState('vortex');
-  const [params, setParams] = useState({
-    speed: 1,
-    scale: 1,
-    intensity: 1,
-  });
+// Define interface for parameters
+interface PatternParams {
+  speed: number;
+  scale: number;
+  intensity: number;
+  distortion: number;
+  xOffset: number;
+  yOffset: number;
+  dotSize: number;
+  xMax: number;
+  yMax: number;
+  step: number;
+  xDivisor: number;
+  xSubtractor: number;
+  yDivisor: number;
+  ySubtractor: number;
+  oBase: number;
+  oDivisor: number;
+  sinDivisor: number;
+  cosMultiplier: number;
+  xKMultiplier: number;
+  xScale: number;
+  koMultiplier: number;
+  yDivFactor: number;
+  yScale: number;
+  eoMultiplier: number;
+}
+
+// Define type for pattern names
+type PatternType = 'vortex' | 'other'; // Add other patterns as needed
+
+// All parameters are defined here with their default values.
+const defaultParams: PatternParams = {
+  // General
+  speed: 1,
+  scale: 1,
+  intensity: 1,
+  distortion: 5,
+  xOffset: 130,
+  yOffset: 70,
+  dotSize: 1,
+  // Loop settings
+  xMax: 200,
+  yMax: 200,
+  step: 2,
+  // k / e calculation
+  xDivisor: 8,
+  xSubtractor: 12,
+  yDivisor: 8,
+  ySubtractor: 12,
+  // o calculation
+  oBase: 2,
+  oDivisor: 3,
+  // Distortion sine/cosine factors
+  sinDivisor: 2,
+  cosMultiplier: 0.8,
+  // px calculation factors
+  xKMultiplier: 4,
+  xScale: 0.7,
+  koMultiplier: 2,
+  // py calculation factors
+  yDivFactor: 5,
+  yScale: 0.7,
+  eoMultiplier: 1,
+};
+
+// Interface for slider props
+interface SliderProps {
+  label: string;
+  paramKey: keyof PatternParams;
+  min: number;
+  max: number;
+  step: number;
+  isDecimal?: boolean;
+}
+
+const PatternEditor: React.FC = () => {
+  const [selectedPattern, setSelectedPattern] = useState<PatternType>('vortex');
+  const [params, setParams] = useState<PatternParams>(defaultParams);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -27,7 +99,6 @@ const PatternEditor = () => {
     const resizeCanvas = () => {
       const container = canvas.parentElement;
       if (!container) return;
-
       canvas.width = container.clientWidth;
       canvas.height = container.clientHeight;
     };
@@ -40,43 +111,49 @@ const PatternEditor = () => {
     const animate = () => {
       const time = (Date.now() - startTime) * 0.001 * params.speed;
 
-      if (!ctx) return;
-
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render pattern
+      // Render background
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'white';
 
-      const scale = params.scale;
-      const intensity = params.intensity;
-
-      for (let y = 0; y <= 200; y += 2) {
-        for (let x = 0; x <= 200; x += 2) {
-          const k = (x / 8 - 12) * scale;
-          const e = (y / 8 - 12) * scale;
+      // Loop through defined iterations using tweakable parameters.
+      for (let y = 0; y <= params.yMax; y += params.step) {
+        for (let x = 0; x <= params.xMax; x += params.step) {
+          // k and e calculation with tweakable divisors and subtractors.
+          const k = (x / params.xDivisor - params.xSubtractor) * params.scale;
+          const e = (y / params.yDivisor - params.ySubtractor) * params.scale;
           const mag = Math.sqrt(k * k + e * e);
-          const o = 2 - mag / 3;
+          const o = params.oBase - mag / params.oDivisor;
+          // d is calculated using distortion, intensity and tweakable sine/cosine factors.
           const d =
-            -5 * Math.abs(Math.sin(k / 2) * Math.cos(e * 0.8)) * intensity;
+            -params.distortion *
+            Math.abs(
+              Math.sin(k / params.sinDivisor) *
+                Math.cos(e * params.cosMultiplier)
+            ) *
+            params.intensity;
+          // Calculate px and py with additional multipliers and scales.
           const px =
-            (x - d * k * 4 + d * k * Math.sin(d + time)) * 0.7 +
-            k * o * 2 +
-            130;
+            (x - d * k * params.xKMultiplier + d * k * Math.sin(d + time)) *
+              params.xScale +
+            k * o * params.koMultiplier +
+            params.xOffset;
           const py =
             (y -
-              (d * y) / 5 +
+              (d * y) / params.yDivFactor +
               d * e * Math.cos(d + time + o) * Math.sin(time + d)) *
-              0.7 +
-            e * o +
-            70;
+              params.yScale +
+            e * o * params.eoMultiplier +
+            params.yOffset;
+
           ctx.fillRect(
             (px * canvas.width) / 400,
             (py * canvas.height) / 400,
-            1,
-            1
+            params.dotSize,
+            params.dotSize
           );
         }
       }
@@ -87,37 +164,267 @@ const PatternEditor = () => {
     animate();
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
       window.removeEventListener('resize', resizeCanvas);
     };
   }, [params]);
 
+  // Helper to render a slider for a given parameter.
+  const renderSlider = ({
+    label,
+    paramKey,
+    min,
+    max,
+    step,
+    isDecimal = false,
+  }: SliderProps) => (
+    <div key={paramKey}>
+      <label className="text-sm font-medium">
+        {label}: {isDecimal ? params[paramKey].toFixed(1) : params[paramKey]}
+      </label>
+      <Slider
+        value={[params[paramKey]]}
+        onValueChange={([value]) =>
+          setParams((prev) => ({ ...prev, [paramKey]: value }))
+        }
+        min={min}
+        max={max}
+        step={step}
+        className="mt-2"
+      />
+    </div>
+  );
+
   return (
     <div className="h-screen w-screen">
       <ResizablePanelGroup direction="horizontal">
-        {/* Left Sidebar */}
-        <ResizablePanel defaultSize={20} minSize={15}>
+        {/* Left Sidebar: All Parameters */}
+        <ResizablePanel defaultSize={25} minSize={20}>
           <div className="h-full bg-gray-500 dark:bg-gray-900">
             <ScrollArea className="h-full p-4">
-              <h2 className="text-lg font-bold mb-4">Patterns</h2>
-              <div className="space-y-2">
+              <h2 className="text-lg font-bold mb-4">Parameters</h2>
+              <div className="space-y-5">
+                {/* General Settings */}
+                <h3 className="font-semibold">General</h3>
+                {renderSlider({
+                  label: 'Speed',
+                  paramKey: 'speed',
+                  min: 0,
+                  max: 2,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'Scale',
+                  paramKey: 'scale',
+                  min: 0.5,
+                  max: 2,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'Intensity',
+                  paramKey: 'intensity',
+                  min: 0,
+                  max: 2,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'Distortion',
+                  paramKey: 'distortion',
+                  min: 1,
+                  max: 10,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'X Offset',
+                  paramKey: 'xOffset',
+                  min: 0,
+                  max: 300,
+                  step: 1,
+                })}
+                {renderSlider({
+                  label: 'Y Offset',
+                  paramKey: 'yOffset',
+                  min: 0,
+                  max: 300,
+                  step: 1,
+                })}
+                {renderSlider({
+                  label: 'Dot Size',
+                  paramKey: 'dotSize',
+                  min: 1,
+                  max: 5,
+                  step: 1,
+                })}
+
+                {/* Loop Settings */}
+                <h3 className="font-semibold">Loop Settings</h3>
+                {renderSlider({
+                  label: 'X Max',
+                  paramKey: 'xMax',
+                  min: 50,
+                  max: 400,
+                  step: 1,
+                })}
+                {renderSlider({
+                  label: 'Y Max',
+                  paramKey: 'yMax',
+                  min: 50,
+                  max: 400,
+                  step: 1,
+                })}
+                {renderSlider({
+                  label: 'Step',
+                  paramKey: 'step',
+                  min: 1,
+                  max: 10,
+                  step: 1,
+                })}
+
+                {/* k / e Calculation */}
+                <h3 className="font-semibold">k / e Calculation</h3>
+                {renderSlider({
+                  label: 'x Divisor',
+                  paramKey: 'xDivisor',
+                  min: 1,
+                  max: 20,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'x Subtractor',
+                  paramKey: 'xSubtractor',
+                  min: 0,
+                  max: 20,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'y Divisor',
+                  paramKey: 'yDivisor',
+                  min: 1,
+                  max: 20,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'y Subtractor',
+                  paramKey: 'ySubtractor',
+                  min: 0,
+                  max: 20,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+
+                {/* o Calculation */}
+                <h3 className="font-semibold">o Calculation</h3>
+                {renderSlider({
+                  label: 'o Base',
+                  paramKey: 'oBase',
+                  min: 0,
+                  max: 5,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'o Divisor',
+                  paramKey: 'oDivisor',
+                  min: 1,
+                  max: 10,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+
+                {/* Distortion Factors */}
+                <h3 className="font-semibold">Distortion Factors</h3>
+                {renderSlider({
+                  label: 'Sin Divisor',
+                  paramKey: 'sinDivisor',
+                  min: 0.1,
+                  max: 10,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'Cos Multiplier',
+                  paramKey: 'cosMultiplier',
+                  min: 0.1,
+                  max: 5,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+
+                {/* px Calculation */}
+                <h3 className="font-semibold">px Calculation</h3>
+                {renderSlider({
+                  label: 'xK Multiplier',
+                  paramKey: 'xKMultiplier',
+                  min: 0,
+                  max: 10,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'x Scale',
+                  paramKey: 'xScale',
+                  min: 0.1,
+                  max: 2,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'ko Multiplier',
+                  paramKey: 'koMultiplier',
+                  min: 0,
+                  max: 5,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+
+                {/* py Calculation */}
+                <h3 className="font-semibold">py Calculation</h3>
+                {renderSlider({
+                  label: 'y Div Factor',
+                  paramKey: 'yDivFactor',
+                  min: 0,
+                  max: 10,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'y Scale',
+                  paramKey: 'yScale',
+                  min: 0.1,
+                  max: 2,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+                {renderSlider({
+                  label: 'eo Multiplier',
+                  paramKey: 'eoMultiplier',
+                  min: 0,
+                  max: 5,
+                  step: 0.1,
+                  isDecimal: true,
+                })}
+
                 <Button
-                  variant={selectedPattern === 'vortex' ? 'default' : 'ghost'}
-                  className="w-full justify-start"
-                  onClick={() => setSelectedPattern('vortex')}
+                  variant="destructive"
+                  onClick={() => setParams(defaultParams)}
+                  className="mt-4 w-full"
                 >
-                  Vortex
+                  Reset to Default
                 </Button>
-                {/* Add more pattern buttons here */}
               </div>
             </ScrollArea>
           </div>
         </ResizablePanel>
 
         {/* Main Content */}
-        <ResizablePanel defaultSize={80}>
+        <ResizablePanel defaultSize={75}>
           <ResizablePanelGroup direction="vertical">
             {/* Canvas Area */}
             <ResizablePanel defaultSize={80}>
@@ -126,50 +433,24 @@ const PatternEditor = () => {
               </div>
             </ResizablePanel>
 
-            {/* Bottom Controls */}
+            {/* Bottom Sidebar: Pattern Navigation */}
             <ResizablePanel defaultSize={20}>
-              <div className=" p-4 bg-gray-500 dark:bg-gray-900">
-                <div className="space-y-5">
-                  <div>
-                    <label className="text-sm font-medium">Speed</label>
-                    <Slider
-                      value={[params.speed]}
-                      onValueChange={([value]) =>
-                        setParams((prev) => ({ ...prev, speed: value }))
+              <div className="h-full bg-gray-500 dark:bg-gray-900">
+                <ScrollArea className="h-full p-4">
+                  <h2 className="text-lg font-bold mb-4">Patterns</h2>
+                  <div className="space-y-2">
+                    <Button
+                      variant={
+                        selectedPattern === 'vortex' ? 'default' : 'ghost'
                       }
-                      min={0}
-                      max={2}
-                      step={0.1}
-                      className="mt-2"
-                    />
+                      className="w-full justify-start"
+                      onClick={() => setSelectedPattern('vortex')}
+                    >
+                      Vortex
+                    </Button>
+                    {/* Add more pattern buttons here */}
                   </div>
-                  <div>
-                    <label className="text-sm font-medium">Scale</label>
-                    <Slider
-                      value={[params.scale]}
-                      onValueChange={([value]) =>
-                        setParams((prev) => ({ ...prev, scale: value }))
-                      }
-                      min={0.5}
-                      max={2}
-                      step={0.1}
-                      className="mt-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Intensity</label>
-                    <Slider
-                      value={[params.intensity]}
-                      onValueChange={([value]) =>
-                        setParams((prev) => ({ ...prev, intensity: value }))
-                      }
-                      min={0}
-                      max={2}
-                      step={0.1}
-                      className="mt-2"
-                    />
-                  </div>
-                </div>
+                </ScrollArea>
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
