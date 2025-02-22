@@ -73,8 +73,8 @@ const defaultParams: PatternParams = {
   yMax: 200,
   step: 2,
   // k / e calculation
-  xDivisor: 8,
-  xSubtractor: 12,
+  xDivisor: 10,
+  xSubtractor: 10,
   yDivisor: 8,
   ySubtractor: 12,
   // o calculation
