@@ -132,7 +132,7 @@ const PatternEditor: React.FC = () => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    let startTime = Date.now();
+    const startTime = Date.now();
 
     const animate = () => {
       const time = (Date.now() - startTime) * 0.001 * params.speed;
