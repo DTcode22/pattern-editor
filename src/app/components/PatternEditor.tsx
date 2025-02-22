@@ -380,7 +380,7 @@ const PatternEditor: React.FC = () => {
                           <Input
                             type="number"
                             min="15"
-                            max="60"
+                            max="180"
                             value={videoOptions.fps}
                             onChange={(e) =>
                               setVideoOptions((prev) => ({
