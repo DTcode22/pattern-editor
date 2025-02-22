@@ -5,6 +5,16 @@ import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Download, Video, Save } from 'lucide-react';
 
 // Define interface for parameters
 interface PatternParams {
@@ -36,6 +46,17 @@ interface PatternParams {
 
 // Define type for pattern names
 type PatternType = 'vortex' | 'other'; // Add other patterns as needed
+
+// Add interface for video export options
+interface VideoExportOptions {
+  duration: number;
+  fps: number;
+}
+
+const defaultVideoOptions: VideoExportOptions = {
+  duration: 10,
+  fps: 30,
+};
 
 // All parameters are defined here with their default values.
 const defaultParams: PatternParams = {
@@ -85,9 +106,14 @@ interface SliderProps {
 const PatternEditor: React.FC = () => {
   const [selectedPattern, setSelectedPattern] = useState<PatternType>('vortex');
   const [params, setParams] = useState<PatternParams>(defaultParams);
+  const [videoOptions, setVideoOptions] =
+    useState<VideoExportOptions>(defaultVideoOptions);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -169,6 +195,91 @@ const PatternEditor: React.FC = () => {
     };
   }, [params]);
 
+  // Function to export configuration as JSON
+  const exportConfiguration = () => {
+    const config = {
+      params,
+      pattern: selectedPattern,
+      timestamp: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(config, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pattern-config-${selectedPattern}-${new Date().getTime()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  // Function to import configuration from JSON
+  const importConfiguration = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const config = JSON.parse(e.target?.result as string);
+        setParams(config.params);
+        setSelectedPattern(config.pattern);
+      } catch (error) {
+        console.error('Error importing configuration:', error);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // Function to export video
+  const exportVideo = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    setIsExporting(true);
+    setExportProgress(0);
+
+    const stream = canvas.captureStream(videoOptions.fps);
+    const mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'video/webm;codecs=vp9',
+    });
+    mediaRecorderRef.current = mediaRecorder;
+
+    const chunks: BlobPart[] = [];
+    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pattern-${selectedPattern}-${new Date().getTime()}.webm`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setIsExporting(false);
+      setExportProgress(0);
+    };
+
+    mediaRecorder.start();
+
+    // Stop recording after specified duration
+    const duration = videoOptions.duration * 1000; // Convert to milliseconds
+    const updateInterval = 100; // Update progress every 100ms
+    let elapsed = 0;
+
+    const progressInterval = setInterval(() => {
+      elapsed += updateInterval;
+      setExportProgress((elapsed / duration) * 100);
+
+      if (elapsed >= duration) {
+        clearInterval(progressInterval);
+        mediaRecorder.stop();
+      }
+    }, updateInterval);
+  };
+
   // Helper to render a slider for a given parameter.
   const renderSlider = ({
     label,
@@ -202,215 +313,141 @@ const PatternEditor: React.FC = () => {
         <ResizablePanel defaultSize={25} minSize={20}>
           <div className="h-full bg-gray-500 dark:bg-gray-900">
             <ScrollArea className="h-full p-4">
-              <h2 className="text-lg font-bold mb-4">Parameters</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-bold">Parameters</h2>
+                <div className="flex gap-2">
+                  {/* Export Config Button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportConfiguration}
+                    title="Export Configuration"
+                  >
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  
+                  {/* Import Config Button */}
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={importConfiguration}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      title="Import Configuration"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+  
+                  {/* Video Export Dialog */}
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isExporting}
+                        title="Export Video"
+                      >
+                        <Video className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Export Video</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label>Duration (seconds)</Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="60"
+                            value={videoOptions.duration}
+                            onChange={(e) => setVideoOptions(prev => ({
+                              ...prev,
+                              duration: Number(e.target.value)
+                            }))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Frame Rate (FPS)</Label>
+                          <Input
+                            type="number"
+                            min="15"
+                            max="60"
+                            value={videoOptions.fps}
+                            onChange={(e) => setVideoOptions(prev => ({
+                              ...prev,
+                              fps: Number(e.target.value)
+                            }))}
+                          />
+                        </div>
+                        <Button 
+                          onClick={exportVideo}
+                          disabled={isExporting}
+                          className="w-full"
+                        >
+                          {isExporting 
+                            ? `Exporting... ${Math.round(exportProgress)}%`
+                            : 'Start Export'}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+  
+              {/* Parameters sections */}
               <div className="space-y-5">
                 {/* General Settings */}
                 <h3 className="font-semibold">General</h3>
-                {renderSlider({
-                  label: 'Speed',
-                  paramKey: 'speed',
-                  min: 0,
-                  max: 2,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'Scale',
-                  paramKey: 'scale',
-                  min: 0.5,
-                  max: 2,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'Intensity',
-                  paramKey: 'intensity',
-                  min: 0,
-                  max: 2,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'Distortion',
-                  paramKey: 'distortion',
-                  min: 1,
-                  max: 10,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'X Offset',
-                  paramKey: 'xOffset',
-                  min: 0,
-                  max: 300,
-                  step: 1,
-                })}
-                {renderSlider({
-                  label: 'Y Offset',
-                  paramKey: 'yOffset',
-                  min: 0,
-                  max: 300,
-                  step: 1,
-                })}
-                {renderSlider({
-                  label: 'Dot Size',
-                  paramKey: 'dotSize',
-                  min: 1,
-                  max: 5,
-                  step: 1,
-                })}
-
+                {renderSlider({ label: 'Speed', paramKey: 'speed', min: 0, max: 2, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'Scale', paramKey: 'scale', min: 0.5, max: 2, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'Intensity', paramKey: 'intensity', min: 0, max: 2, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'Distortion', paramKey: 'distortion', min: 1, max: 10, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'X Offset', paramKey: 'xOffset', min: 0, max: 300, step: 1 })}
+                {renderSlider({ label: 'Y Offset', paramKey: 'yOffset', min: 0, max: 300, step: 1 })}
+                {renderSlider({ label: 'Dot Size', paramKey: 'dotSize', min: 1, max: 5, step: 1 })}
+  
                 {/* Loop Settings */}
                 <h3 className="font-semibold">Loop Settings</h3>
-                {renderSlider({
-                  label: 'X Max',
-                  paramKey: 'xMax',
-                  min: 50,
-                  max: 400,
-                  step: 1,
-                })}
-                {renderSlider({
-                  label: 'Y Max',
-                  paramKey: 'yMax',
-                  min: 50,
-                  max: 400,
-                  step: 1,
-                })}
-                {renderSlider({
-                  label: 'Step',
-                  paramKey: 'step',
-                  min: 1,
-                  max: 10,
-                  step: 1,
-                })}
-
+                {renderSlider({ label: 'X Max', paramKey: 'xMax', min: 50, max: 400, step: 1 })}
+                {renderSlider({ label: 'Y Max', paramKey: 'yMax', min: 50, max: 400, step: 1 })}
+                {renderSlider({ label: 'Step', paramKey: 'step', min: 1, max: 10, step: 1 })}
+  
                 {/* k / e Calculation */}
                 <h3 className="font-semibold">k / e Calculation</h3>
-                {renderSlider({
-                  label: 'x Divisor',
-                  paramKey: 'xDivisor',
-                  min: 1,
-                  max: 20,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'x Subtractor',
-                  paramKey: 'xSubtractor',
-                  min: 0,
-                  max: 20,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'y Divisor',
-                  paramKey: 'yDivisor',
-                  min: 1,
-                  max: 20,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'y Subtractor',
-                  paramKey: 'ySubtractor',
-                  min: 0,
-                  max: 20,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-
+                {renderSlider({ label: 'x Divisor', paramKey: 'xDivisor', min: 1, max: 20, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'x Subtractor', paramKey: 'xSubtractor', min: 0, max: 20, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'y Divisor', paramKey: 'yDivisor', min: 1, max: 20, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'y Subtractor', paramKey: 'ySubtractor', min: 0, max: 20, step: 0.1, isDecimal: true })}
+  
                 {/* o Calculation */}
                 <h3 className="font-semibold">o Calculation</h3>
-                {renderSlider({
-                  label: 'o Base',
-                  paramKey: 'oBase',
-                  min: 0,
-                  max: 5,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'o Divisor',
-                  paramKey: 'oDivisor',
-                  min: 1,
-                  max: 10,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-
+                {renderSlider({ label: 'o Base', paramKey: 'oBase', min: 0, max: 5, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'o Divisor', paramKey: 'oDivisor', min: 1, max: 10, step: 0.1, isDecimal: true })}
+  
                 {/* Distortion Factors */}
                 <h3 className="font-semibold">Distortion Factors</h3>
-                {renderSlider({
-                  label: 'Sin Divisor',
-                  paramKey: 'sinDivisor',
-                  min: 0.1,
-                  max: 10,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'Cos Multiplier',
-                  paramKey: 'cosMultiplier',
-                  min: 0.1,
-                  max: 5,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-
+                {renderSlider({ label: 'Sin Divisor', paramKey: 'sinDivisor', min: 0.1, max: 10, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'Cos Multiplier', paramKey: 'cosMultiplier', min: 0.1, max: 5, step: 0.1, isDecimal: true })}
+  
                 {/* px Calculation */}
                 <h3 className="font-semibold">px Calculation</h3>
-                {renderSlider({
-                  label: 'xK Multiplier',
-                  paramKey: 'xKMultiplier',
-                  min: 0,
-                  max: 10,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'x Scale',
-                  paramKey: 'xScale',
-                  min: 0.1,
-                  max: 2,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'ko Multiplier',
-                  paramKey: 'koMultiplier',
-                  min: 0,
-                  max: 5,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-
+                {renderSlider({ label: 'xK Multiplier', paramKey: 'xKMultiplier', min: 0, max: 10, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'x Scale', paramKey: 'xScale', min: 0.1, max: 2, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'ko Multiplier', paramKey: 'koMultiplier', min: 0, max: 5, step: 0.1, isDecimal: true })}
+  
                 {/* py Calculation */}
                 <h3 className="font-semibold">py Calculation</h3>
-                {renderSlider({
-                  label: 'y Div Factor',
-                  paramKey: 'yDivFactor',
-                  min: 0,
-                  max: 10,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'y Scale',
-                  paramKey: 'yScale',
-                  min: 0.1,
-                  max: 2,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-                {renderSlider({
-                  label: 'eo Multiplier',
-                  paramKey: 'eoMultiplier',
-                  min: 0,
-                  max: 5,
-                  step: 0.1,
-                  isDecimal: true,
-                })}
-
+                {renderSlider({ label: 'y Div Factor', paramKey: 'yDivFactor', min: 0, max: 10, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'y Scale', paramKey: 'yScale', min: 0.1, max: 2, step: 0.1, isDecimal: true })}
+                {renderSlider({ label: 'eo Multiplier', paramKey: 'eoMultiplier', min: 0, max: 5, step: 0.1, isDecimal: true })}
+  
                 <Button
                   variant="destructive"
                   onClick={() => setParams(defaultParams)}
@@ -422,7 +459,7 @@ const PatternEditor: React.FC = () => {
             </ScrollArea>
           </div>
         </ResizablePanel>
-
+  
         {/* Main Content */}
         <ResizablePanel defaultSize={75}>
           <ResizablePanelGroup direction="vertical">
@@ -432,7 +469,7 @@ const PatternEditor: React.FC = () => {
                 <canvas ref={canvasRef} className="h-full w-full" />
               </div>
             </ResizablePanel>
-
+  
             {/* Bottom Sidebar: Pattern Navigation */}
             <ResizablePanel defaultSize={20}>
               <div className="h-full bg-gray-500 dark:bg-gray-900">
@@ -440,9 +477,7 @@ const PatternEditor: React.FC = () => {
                   <h2 className="text-lg font-bold mb-4">Patterns</h2>
                   <div className="space-y-2">
                     <Button
-                      variant={
-                        selectedPattern === 'vortex' ? 'default' : 'ghost'
-                      }
+                      variant={selectedPattern === 'vortex' ? 'default' : 'ghost'}
                       className="w-full justify-start"
                       onClick={() => setSelectedPattern('vortex')}
                     >
@@ -457,7 +492,6 @@ const PatternEditor: React.FC = () => {
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
-  );
-};
+  )
 
-export default PatternEditor;
+export default PatternEditorM
