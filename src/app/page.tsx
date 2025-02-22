@@ -1,5 +1,5 @@
-export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen"></div>
-  );
+import PatternEditor from './components/PatternEditor';
+
+export default function Page() {
+  return <PatternEditor />;
 }
