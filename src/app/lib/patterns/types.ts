@@ -29,6 +29,8 @@ export interface PatternParams {
 // Spiral pattern specific parameters
 export interface SpiralPatternParams {
   // These parameters override the base ones in PatternParams
+  xMax: number;
+  yMax: number;
   xDivisor: number;
   xSubtractor: number;
   yDivisor: number;
