@@ -29,12 +29,18 @@ export interface PatternParams {
 // Spiral pattern specific parameters
 export interface SpiralPatternParams {
   // These parameters override the base ones in PatternParams
+  xDivisor: number;
+  xSubtractor: number;
+  yDivisor: number;
   ySubtractor: number;
+  oDivisor: number;
   yDivFactor: number;
-  eoMultiplier: number;
+  cosMultiplier: number;
+  koMultiplier: number;
   xScale: number;
-  yOffset: number;
   xOffset: number;
+  yOffset: number;
+  eoMultiplier: number;
 }
 
 // Combined pattern parameters

@@ -41,13 +41,19 @@ export const defaultVortexParams: PatternParams = {
 
 // Default spiral pattern parameters
 export const defaultSpiralParams: SpiralPatternParams = {
-  // We're reusing many of the vortex params but adding specific ones for spiral
-  ySubtractor: 5, // Changed from negative value in vortex to positive
-  yDivFactor: 12,
-  eoMultiplier: 3, // Phase multiplier for cosine term
-  xScale: 1.5,
-  yOffset: 150,
+  // Specific parameters for the spiral pattern
+  xDivisor: 4,
+  xSubtractor: 12.5,
+  yDivisor: 9,
+  ySubtractor: 9, // Positive value instead of negative as in vortex
+  oDivisor: 9,
+  yDivFactor: 30,
+  cosMultiplier: 9,
+  koMultiplier: 4,
+  xScale: 0.7,
   xOffset: 200,
+  yOffset: 200,
+  eoMultiplier: 4,
 };
 
 // Default video export options

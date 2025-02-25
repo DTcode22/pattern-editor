@@ -99,10 +99,20 @@ const usePatternRenderer = (
       ctx.fillStyle = 'white';
 
       // Loop through defined iterations using tweakable parameters
+      // We'll use a similar approach to the user's code but maintain our looping structure
+      const pointsPerIteration = (params.xMax * params.yMax) / params.step;
+      const maxPoints = Math.min(20000, pointsPerIteration); // Cap at 20000 points for performance
+
       for (let y = 0; y <= params.yMax; y += params.step) {
         for (let x = 0; x <= params.xMax; x += params.step) {
+          // Calculate k and e using the provided parameters
           const k = x / params.xDivisor - params.xSubtractor;
           const e = y / params.yDivisor + params.ySubtractor;
+
+          // Skip division by zero
+          if (Math.abs(k) < 0.001) continue;
+
+          // Calculate magnitude and o
           const mag = Math.sqrt(k * k + e * e);
           const o = mag / params.oDivisor;
 
