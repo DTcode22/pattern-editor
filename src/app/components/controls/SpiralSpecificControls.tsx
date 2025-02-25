@@ -121,7 +121,7 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
 
       {/* Position & Scale */}
       <div className="space-y-3">
-        <h3 className="font-semibold">Position & Scale</h3>
+        <h3 className="font-semibold">Scale</h3>
         <SliderControl
           label="X Scale"
           paramKey="xScale"
@@ -132,24 +132,7 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           value={params.xScale}
           onChange={onChange}
         />
-        <SliderControl
-          label="X Offset"
-          paramKey="xOffset"
-          min={0}
-          max={400}
-          step={5}
-          value={params.xOffset}
-          onChange={onChange}
-        />
-        <SliderControl
-          label="Y Offset"
-          paramKey="yOffset"
-          min={0}
-          max={400}
-          step={5}
-          value={params.yOffset}
-          onChange={onChange}
-        />
+        {/* X and Y offsets are now controlled by dragging on the canvas */}
       </div>
     </div>
   );

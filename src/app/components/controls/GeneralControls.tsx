@@ -16,6 +16,9 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
   return (
     <div className="space-y-3">
       <h3 className="font-semibold">General</h3>
+      <p className="text-xs text-gray-500 mb-2">
+        Tip: Click and drag on the canvas to move the pattern position
+      </p>
       <SliderControl
         label="Speed"
         paramKey="speed"
@@ -54,24 +57,6 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         step={0.1}
         isDecimal={true}
         value={params.distortion}
-        onChange={onChange}
-      />
-      <SliderControl
-        label="X Offset"
-        paramKey="xOffset"
-        min={0}
-        max={300}
-        step={1}
-        value={params.xOffset}
-        onChange={onChange}
-      />
-      <SliderControl
-        label="Y Offset"
-        paramKey="yOffset"
-        min={0}
-        max={300}
-        step={1}
-        value={params.yOffset}
         onChange={onChange}
       />
       <SliderControl
