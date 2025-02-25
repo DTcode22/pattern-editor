@@ -1,9 +1,5 @@
 import { useRef, useEffect } from 'react';
-import {
-  PatternParams,
-  PatternType,
-  CombinedPatternParams,
-} from '../lib/patterns/types';
+import { PatternType, CombinedPatternParams } from '../lib/patterns/types';
 
 interface RenderPattern {
   (
@@ -100,8 +96,8 @@ const usePatternRenderer = (
 
       // Loop through defined iterations using tweakable parameters
       // We'll use a similar approach to the user's code but maintain our looping structure
-      const pointsPerIteration = (params.xMax * params.yMax) / params.step;
-      const maxPoints = Math.min(20000, pointsPerIteration); // Cap at 20000 points for performance
+      // const pointsPerIteration = (params.xMax * params.yMax) / params.step;
+      // const maxPoints = Math.min(20000, pointsPerIteration); // Cap at 20000 points for performance
 
       for (let y = 0; y <= params.yMax; y += params.step) {
         for (let x = 0; x <= params.xMax; x += params.step) {

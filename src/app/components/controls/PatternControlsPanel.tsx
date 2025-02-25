@@ -1,16 +1,15 @@
 'use client';
 
-import React from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import GeneralControls from './GeneralControls';
-import LoopControls from './LoopControls';
-import VortexSpecificControls from './VortexSpecificControls';
-import SpiralSpecificControls from './SpiralSpecificControls';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import React from 'react';
+import { CombinedPatternParams, PatternType } from '../../lib/patterns/types';
 import ConfigControls from '../shared/ConfigControls';
 import VideoExportDialog from '../shared/VideoExportDialog';
-import { CombinedPatternParams, PatternType } from '../../lib/patterns/types';
-import { defaultVortexParams } from '../../lib/patterns/defaultParams';
+import GeneralControls from './GeneralControls';
+import LoopControls from './LoopControls';
+import SpiralSpecificControls from './SpiralSpecificControls';
+import VortexSpecificControls from './VortexSpecificControls';
 
 interface PatternControlsPanelProps {
   params: CombinedPatternParams;
