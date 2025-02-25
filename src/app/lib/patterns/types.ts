@@ -40,6 +40,7 @@ export interface SpiralPatternParams {
   cosMultiplier: number;
   koMultiplier: number;
   xScale: number;
+  step: number;
   xOffset: number;
   yOffset: number;
   eoMultiplier: number;

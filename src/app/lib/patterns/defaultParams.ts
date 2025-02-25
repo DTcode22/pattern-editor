@@ -42,10 +42,10 @@ export const defaultVortexParams: PatternParams = {
 // Default spiral pattern parameters
 export const defaultSpiralParams: SpiralPatternParams = {
   // Specific parameters for the spiral pattern
-  xMax: 100,
-  yMax: 100,
+  xMax: 90,
+  yMax: 90,
   xDivisor: 4,
-  xSubtractor: 12.5,
+  xSubtractor: 12,
   yDivisor: 9,
   ySubtractor: 9, // Positive value instead of negative as in vortex
   oDivisor: 9,
@@ -53,6 +53,7 @@ export const defaultSpiralParams: SpiralPatternParams = {
   cosMultiplier: 9,
   koMultiplier: 4,
   xScale: 0.7,
+  step: 1,
   xOffset: 200,
   yOffset: 200,
   eoMultiplier: 4,
