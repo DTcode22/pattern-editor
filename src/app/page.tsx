@@ -1,4 +1,4 @@
-import PatternEditor from '../app/components/PatternEditor';
+import PatternEditor from './components/PatternEditor';
 
 export default function Page() {
   return <PatternEditor />;
