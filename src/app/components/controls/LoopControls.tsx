@@ -16,27 +16,27 @@ const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
       <SliderControl
         label="X Max"
         paramKey="xMax"
-        min={50}
-        max={400}
-        step={1}
+        min={10}
+        max={800}
+        step={5}
         value={params.xMax}
         onChange={onChange}
       />
       <SliderControl
         label="Y Max"
         paramKey="yMax"
-        min={50}
-        max={400}
-        step={1}
+        min={10}
+        max={800}
+        step={5}
         value={params.yMax}
         onChange={onChange}
       />
       <SliderControl
         label="Step"
         paramKey="step"
-        min={1}
-        max={10}
-        step={1}
+        min={0.5}
+        max={3}
+        step={0.1}
         value={params.step}
         onChange={onChange}
       />
