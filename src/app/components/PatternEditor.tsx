@@ -113,7 +113,6 @@ const PatternEditor: React.FC = () => {
                 ref={canvasRef}
                 params={params}
                 patternType={selectedPattern}
-                onParamChange={handleParamChange}
               />
             </ResizablePanel>
 

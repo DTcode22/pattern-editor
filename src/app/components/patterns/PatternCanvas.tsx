@@ -7,11 +7,10 @@ import { CombinedPatternParams, PatternType } from '../../lib/patterns/types';
 interface PatternCanvasProps {
   params: CombinedPatternParams;
   patternType: PatternType;
-  onParamChange?: (key: keyof CombinedPatternParams, value: number) => void;
 }
 
 const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
-  ({ params, patternType, onParamChange }, ref) => {
+  ({ params, patternType }, ref) => {
     const [zoom, setZoom] = useState(1);
     const canvasRef = usePatternRenderer(params, patternType, zoom);
 
