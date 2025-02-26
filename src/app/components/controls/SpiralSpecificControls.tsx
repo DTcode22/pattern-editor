@@ -21,7 +21,7 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
         <SliderControl
           label="X Divisor"
           paramKey="xDivisor"
-          min={1}
+          min={0}
           max={20}
           step={0.5}
           isDecimal={true}
@@ -41,8 +41,8 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
         <SliderControl
           label="Y Divisor"
           paramKey="yDivisor"
-          min={1}
-          max={20}
+          min={0}
+          max={30}
           step={0.5}
           isDecimal={true}
           value={params.yDivisor}
