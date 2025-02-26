@@ -69,6 +69,26 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         value={params.dotSize}
         onChange={onChange}
       />
+      <SliderControl
+        label="X Offset"
+        paramKey="xOffset"
+        min={-100}
+        max={400}
+        step={0.1}
+        isDecimal={true}
+        value={params.xOffset}
+        onChange={onChange}
+      />
+      <SliderControl
+        label="Y Offset"
+        paramKey="yOffset"
+        min={-100}
+        max={400}
+        step={0.1}
+        isDecimal={true}
+        value={params.yOffset}
+        onChange={onChange}
+      />
     </div>
   );
 };
