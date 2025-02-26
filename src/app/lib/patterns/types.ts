@@ -54,6 +54,8 @@ export type CombinedPatternParams = PatternParams &
 export interface VideoExportOptions {
   duration: number;
   fps: number;
+  bitrate: number;
+  quality: 'low' | 'medium' | 'high' | 'ultra' | 'extreme' | 'insane';
 }
 
 // Pattern types

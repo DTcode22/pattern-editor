@@ -37,44 +37,135 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
     setIsExporting(true);
     setExportProgress(0);
 
+    // We need to capture the original canvas stream directly
+    // instead of making a static copy, to record the animation
     const stream = canvas.captureStream(videoOptions.fps);
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: 'video/webm;codecs=vp9',
-    });
-    mediaRecorderRef.current = mediaRecorder;
 
-    const chunks: BlobPart[] = [];
-    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `pattern-${patternType}-${new Date().getTime()}.webm`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+    // Try different MIME types in order of preference for better compatibility
+    const mimeTypes = [
+      'video/webm;codecs=vp9',
+      'video/webm;codecs=vp8',
+      'video/webm',
+    ];
+
+    let selectedMimeType = '';
+    for (const mimeType of mimeTypes) {
+      if (MediaRecorder.isTypeSupported(mimeType)) {
+        selectedMimeType = mimeType;
+        break;
+      }
+    }
+
+    if (!selectedMimeType) {
+      console.error('No supported MIME types found');
       setIsExporting(false);
-      setExportProgress(0);
+      return;
+    }
+
+    // Use the best codec available and the selected bitrate
+    const options: MediaRecorderOptions = {
+      mimeType: selectedMimeType,
+      videoBitsPerSecond: videoOptions.bitrate,
     };
 
-    mediaRecorder.start();
+    try {
+      const mediaRecorder = new MediaRecorder(stream, options);
+      mediaRecorderRef.current = mediaRecorder;
 
-    // Stop recording after specified duration
-    const duration = videoOptions.duration * 1000; // Convert to milliseconds
-    const updateInterval = 100; // Update progress every 100ms
-    let elapsed = 0;
+      const chunks: BlobPart[] = [];
 
-    const progressInterval = setInterval(() => {
-      elapsed += updateInterval;
-      setExportProgress((elapsed / duration) * 100);
+      // Request more frequent data chunks for better quality
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
 
-      if (elapsed >= duration) {
-        clearInterval(progressInterval);
-        mediaRecorder.stop();
-      }
-    }, updateInterval);
+      mediaRecorder.onstop = () => {
+        try {
+          const blob = new Blob(chunks, { type: selectedMimeType });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `pattern-${patternType}-${
+            videoOptions.quality
+          }-${new Date().getTime()}.webm`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.error('Error saving video:', error);
+        } finally {
+          setIsExporting(false);
+          setExportProgress(0);
+        }
+      };
+
+      // Start recording with frequent data collection (smaller time slices = higher quality)
+      mediaRecorder.start(20); // Collect data every 20ms for smoother output
+
+      // Stop recording after specified duration
+      const duration = videoOptions.duration * 1000; // Convert to milliseconds
+      const updateInterval = 100; // Update progress every 100ms
+      let elapsed = 0;
+
+      const progressInterval = setInterval(() => {
+        elapsed += updateInterval;
+        setExportProgress((elapsed / duration) * 100);
+
+        if (elapsed >= duration) {
+          clearInterval(progressInterval);
+          mediaRecorder.stop();
+        }
+      }, updateInterval);
+    } catch (error) {
+      console.error('Error setting up media recorder:', error);
+      setIsExporting(false);
+    }
+  };
+
+  const handleFpsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVideoOptions({ ...videoOptions, fps: Number(e.target.value) });
+  };
+
+  const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVideoOptions({ ...videoOptions, duration: Number(e.target.value) });
+  };
+
+  const handleQualityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const quality = e.target.value as
+      | 'low'
+      | 'medium'
+      | 'high'
+      | 'ultra'
+      | 'extreme'
+      | 'insane';
+    // Set appropriate bitrate based on quality
+    let bitrate = 2000000; // default for medium
+
+    switch (quality) {
+      case 'low':
+        bitrate = 1000000; // 1 Mbps
+        break;
+      case 'medium':
+        bitrate = 4000000; // 4 Mbps
+        break;
+      case 'high':
+        bitrate = 8000000; // 8 Mbps
+        break;
+      case 'ultra':
+        bitrate = 16000000; // 16 Mbps
+        break;
+      case 'extreme':
+        bitrate = 32000000; // 32 Mbps
+        break;
+      case 'insane':
+        bitrate = 64000000; // 64 Mbps
+        break;
+    }
+
+    setVideoOptions({ ...videoOptions, quality, bitrate });
   };
 
   return (
@@ -101,12 +192,7 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
               min="1"
               max="60"
               value={videoOptions.duration}
-              onChange={(e) =>
-                setVideoOptions((prev) => ({
-                  ...prev,
-                  duration: Number(e.target.value),
-                }))
-              }
+              onChange={handleDurationChange}
             />
           </div>
           <div className="space-y-2">
@@ -116,13 +202,23 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
               min="15"
               max="180"
               value={videoOptions.fps}
-              onChange={(e) =>
-                setVideoOptions((prev) => ({
-                  ...prev,
-                  fps: Number(e.target.value),
-                }))
-              }
+              onChange={handleFpsChange}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>Quality</Label>
+            <select
+              value={videoOptions.quality}
+              onChange={handleQualityChange}
+              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="ultra">Ultra</option>
+              <option value="extreme">Extreme</option>
+              <option value="insane">Insane</option>
+            </select>
           </div>
           <Button
             onClick={exportVideo}
