@@ -12,10 +12,10 @@ interface PatternCanvasProps {
 
 const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
   ({ params, patternType, onParamChange }, ref) => {
-    const canvasRef = usePatternRenderer(params, patternType);
+    const [zoom, setZoom] = useState(1);
+    const canvasRef = usePatternRenderer(params, patternType, zoom);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState(1);
 
     // Pass the internal ref to the forwarded ref
     React.useImperativeHandle(
@@ -81,28 +81,21 @@ const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
         onMouseLeave={handleMouseLeave}
         onWheel={handleWheel}
       >
-        <canvas
-          ref={canvasRef}
-          style={{
-            transform: `scale(${zoom})`,
-            transformOrigin: 'center center',
-          }}
-          className="h-full w-full"
-        />
-        <div className="absolute top-2 left-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+        <canvas ref={canvasRef} className="h-full w-full" />
+        <div className="absolute top-2 left-2 text-white text-s bg-black/50 px-2 py-1 rounded">
           Position: ( {params.xOffset.toFixed(1)}, {params.yOffset.toFixed(1)} )
           | Zoom: {zoom.toFixed(1)}
         </div>
-        <div className="absolute bottom-2 right-2 space-x-1">
+        <div className="absolute bottom-2  right-2 space-x-2">
           <button
             onClick={handleZoomOut}
-            className="bg-white text-black px-2 py-1 rounded"
+            className="bg-white text-black px-5 py-2 rounded"
           >
             -
           </button>
           <button
             onClick={handleZoomIn}
-            className="bg-white text-black px-2 py-1 rounded"
+            className="bg-white text-black px-4 py-2 rounded"
           >
             +
           </button>

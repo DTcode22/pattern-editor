@@ -12,7 +12,8 @@ interface RenderPattern {
 
 const usePatternRenderer = (
   params: CombinedPatternParams,
-  patternType: PatternType
+  patternType: PatternType,
+  zoom: number
 ) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | null>(null);
@@ -145,13 +146,15 @@ const usePatternRenderer = (
 
     const animate = () => {
       const time = (Date.now() - startTime) * 0.001 * params.speed;
-
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.scale(zoom, zoom);
       if (patternType === 'vortex') {
         renderVortexPattern(ctx, canvas, params, time);
       } else if (patternType === 'spiral') {
         renderSpiralPattern(ctx, canvas, params, time);
       }
-
+      ctx.restore();
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -161,7 +164,7 @@ const usePatternRenderer = (
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
       window.removeEventListener('resize', resizeCanvas);
     };
-  }, [params, patternType]);
+  }, [params, patternType, zoom]);
 
   return canvasRef;
 };
