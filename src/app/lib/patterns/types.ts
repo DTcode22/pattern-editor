@@ -55,7 +55,7 @@ export interface VideoExportOptions {
   duration: number;
   fps: number;
   bitrate: number;
-  quality: 'low' | 'medium' | 'high' | 'ultra' | 'extreme' | 'insane';
+  quality: 'low' | 'medium' | 'high';
 }
 
 // Pattern types

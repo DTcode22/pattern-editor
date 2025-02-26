@@ -62,7 +62,7 @@ export const defaultSpiralParams: SpiralPatternParams = {
 // Default video export options
 export const defaultVideoOptions: VideoExportOptions = {
   duration: 10,
-  fps: 120,
-  bitrate: 8000000, // 8 Mbps bitrate for high quality
-  quality: 'high',
+  fps: 30,
+  bitrate: 4000000, // 4 Mbps bitrate for medium quality
+  quality: 'medium',
 };

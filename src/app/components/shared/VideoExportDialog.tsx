@@ -125,7 +125,7 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
     }
   };
 
-  const handleFpsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFpsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setVideoOptions({ ...videoOptions, fps: Number(e.target.value) });
   };
 
@@ -134,15 +134,9 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
   };
 
   const handleQualityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const quality = e.target.value as
-      | 'low'
-      | 'medium'
-      | 'high'
-      | 'ultra'
-      | 'extreme'
-      | 'insane';
+    const quality = e.target.value as 'low' | 'medium' | 'high';
     // Set appropriate bitrate based on quality
-    let bitrate = 2000000; // default for medium
+    let bitrate = 4000000; // default for medium
 
     switch (quality) {
       case 'low':
@@ -153,15 +147,6 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
         break;
       case 'high':
         bitrate = 8000000; // 8 Mbps
-        break;
-      case 'ultra':
-        bitrate = 16000000; // 16 Mbps
-        break;
-      case 'extreme':
-        bitrate = 32000000; // 32 Mbps
-        break;
-      case 'insane':
-        bitrate = 64000000; // 64 Mbps
         break;
     }
 
@@ -197,13 +182,16 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
           </div>
           <div className="space-y-2">
             <Label>Frame Rate (FPS)</Label>
-            <Input
-              type="number"
-              min="15"
-              max="180"
+            <select
               value={videoOptions.fps}
               onChange={handleFpsChange}
-            />
+              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="15">15 FPS</option>
+              <option value="30">30 FPS</option>
+              <option value="60">60 FPS</option>
+              <option value="120">120 FPS</option>
+            </select>
           </div>
           <div className="space-y-2">
             <Label>Quality</Label>
@@ -212,12 +200,9 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
               onChange={handleQualityChange}
               className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="ultra">Ultra</option>
-              <option value="extreme">Extreme</option>
-              <option value="insane">Insane</option>
+              <option value="low">Low (1 Mbps)</option>
+              <option value="medium">Medium (4 Mbps)</option>
+              <option value="high">High (8 Mbps)</option>
             </select>
           </div>
           <Button
