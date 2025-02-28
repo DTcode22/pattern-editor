@@ -15,19 +15,17 @@ const PatternNavigation: React.FC<PatternNavigationProps> = ({
   onSelectPattern,
 }) => {
   return (
-    <div className="h-full bg-gray-500 dark:bg-gray-900">
+    <div className="h-full bg-[url('/asdf.jpg')] bg-bottom bg-cover">
       <ScrollArea className="h-full p-4">
-        <h2 className="text-lg font-bold mb-4">Patterns</h2>
+        <h2 className="text-lg font-bold mb-4 text-white">Patterns</h2>
         <div className="space-y-2">
           <Button
-            variant={selectedPattern === 'vortex' ? 'default' : 'ghost'}
             className="w-full justify-start"
             onClick={() => onSelectPattern('vortex')}
           >
             Vortex
           </Button>
           <Button
-            variant={selectedPattern === 'spiral' ? 'default' : 'ghost'}
             className="w-full justify-start"
             onClick={() => onSelectPattern('spiral')}
           >

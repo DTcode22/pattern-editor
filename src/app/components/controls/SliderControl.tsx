@@ -27,7 +27,7 @@ const SliderControl: React.FC<SliderControlProps> = ({
 }) => {
   return (
     <div>
-      <label className="text-sm font-medium">
+      <label className="text-sm font-medium text-white">
         {label}: {isDecimal ? value.toFixed(1) : value}
       </label>
       <Slider

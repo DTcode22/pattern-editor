@@ -17,7 +17,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
     <div className="space-y-5">
       {/* k / e Calculation */}
       <div className="space-y-3">
-        <h3 className="font-semibold">k / e Calculation</h3>
+        <h3 className="font-semibold text-white text-center">
+          k / e Calculation
+        </h3>
         <SliderControl
           label="x Divisor"
           paramKey="xDivisor"
@@ -62,7 +64,7 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
 
       {/* o Calculation */}
       <div className="space-y-3">
-        <h3 className="font-semibold">o Calculation</h3>
+        <h3 className="font-semibold text-white text-center">o Calculation</h3>
         <SliderControl
           label="o Base"
           paramKey="oBase"
@@ -87,7 +89,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
 
       {/* Distortion Factors */}
       <div className="space-y-3">
-        <h3 className="font-semibold">Distortion Factors</h3>
+        <h3 className="font-semibold text-white text-center">
+          Distortion Factors
+        </h3>
         <SliderControl
           label="Sin Divisor"
           paramKey="sinDivisor"
@@ -112,7 +116,7 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
 
       {/* px Calculation */}
       <div className="space-y-3">
-        <h3 className="font-semibold">px Calculation</h3>
+        <h3 className="font-semibold text-white text-center">px Calculation</h3>
         <SliderControl
           label="xK Multiplier"
           paramKey="xKMultiplier"
@@ -147,7 +151,7 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
 
       {/* py Calculation */}
       <div className="space-y-3">
-        <h3 className="font-semibold">py Calculation</h3>
+        <h3 className="font-semibold text-white text-center">py Calculation</h3>
         <SliderControl
           label="y Div Factor"
           paramKey="yDivFactor"

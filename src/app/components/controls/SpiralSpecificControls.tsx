@@ -17,7 +17,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
     <div className="space-y-5">
       {/* k / e Calculation */}
       <div className="space-y-3">
-        <h3 className="font-semibold">k / e Calculation</h3>
+        <h3 className="font-semibold text-white text-center">
+          k / e Calculation
+        </h3>
         <SliderControl
           label="X Divisor"
           paramKey="xDivisor"
@@ -62,7 +64,7 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
 
       {/* o Calculation */}
       <div className="space-y-3">
-        <h3 className="font-semibold">o Calculation</h3>
+        <h3 className="font-semibold text-white text-center">o Calculation</h3>
         <SliderControl
           label="O Divisor"
           paramKey="oDivisor"

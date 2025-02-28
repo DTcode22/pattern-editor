@@ -29,50 +29,50 @@ const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
   onImport,
 }) => {
   return (
-    <div className="h-full bg-gray-500 dark:bg-gray-900">
+    <div className="h-full bg-[url('/asdf.jpg')] bg-left bg-cover">
       <ScrollArea className="h-full p-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold">Parameters</h2>
+          <h2 className="text-lg font-bold text-white">Parameters</h2>
           <div className="flex gap-2">
-            {/* Import/Export Config Controls */}
             <ConfigControls
               params={params}
               patternType={patternType}
               onImport={onImport}
             />
-
-            {/* Video Export Dialog */}
             <VideoExportDialog
               canvasRef={canvasRef}
               patternType={patternType}
             />
           </div>
         </div>
-
-        {/* Parameters sections */}
         <div className="space-y-5">
-          {/* General Settings (shared across patterns) */}
-          <GeneralControls params={params} onChange={onParamChange} />
-
-          {/* Loop Settings (shared across patterns) */}
-          <LoopControls params={params} onChange={onParamChange} />
-
-          {/* Pattern-specific controls */}
+          <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+            <GeneralControls params={params} onChange={onParamChange} />
+          </div>
+          <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+            <LoopControls params={params} onChange={onParamChange} />
+          </div>
           {patternType === 'vortex' && (
-            <VortexSpecificControls params={params} onChange={onParamChange} />
+            <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+              <VortexSpecificControls
+                params={params}
+                onChange={onParamChange}
+              />
+            </div>
           )}
-
           {patternType === 'spiral' && (
-            <SpiralSpecificControls params={params} onChange={onParamChange} />
+            <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+              <SpiralSpecificControls
+                params={params}
+                onChange={onParamChange}
+              />
+            </div>
           )}
-
-          <Button
-            variant="destructive"
-            onClick={onReset}
-            className="mt-4 w-full"
-          >
-            Reset to Default
-          </Button>
+          <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+            <Button variant="destructive" onClick={onReset} className="w-full">
+              Reset to Default
+            </Button>
+          </div>
         </div>
       </ScrollArea>
     </div>

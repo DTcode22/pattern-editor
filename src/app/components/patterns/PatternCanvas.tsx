@@ -74,7 +74,7 @@ const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
 
     return (
       <div
-        className="h-full w-full bg-black cursor-move relative"
+        className="h-full w-full bg-black cursor-grab active:cursor-grabbing  relative"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

@@ -12,7 +12,7 @@ interface LoopControlsProps {
 const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold">Loop Settings</h3>
+      <h3 className="font-semibold text-white text-center">Loop Settings</h3>
       <SliderControl
         label="X Max"
         paramKey="xMax"
