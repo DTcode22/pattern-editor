@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import React from 'react';
 import { PatternType } from '../../lib/patterns/types';
 
 interface PatternNavigationProps {
@@ -11,7 +11,6 @@ interface PatternNavigationProps {
 }
 
 const PatternNavigation: React.FC<PatternNavigationProps> = ({
-  selectedPattern,
   onSelectPattern,
 }) => {
   return (
@@ -31,7 +30,12 @@ const PatternNavigation: React.FC<PatternNavigationProps> = ({
           >
             Spiral
           </Button>
-          {/* Add more pattern buttons here as needed */}
+          <Button
+            className="w-full justify-start"
+            onClick={() => onSelectPattern('medusa')}
+          >
+            Medusa
+          </Button>
         </div>
       </ScrollArea>
     </div>

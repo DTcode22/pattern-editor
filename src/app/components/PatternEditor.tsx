@@ -10,15 +10,16 @@ import { PatternType, CombinedPatternParams } from '../lib/patterns/types';
 import {
   defaultVortexParams,
   defaultSpiralParams,
+  defaultMedusaParams,
 } from '../lib/patterns/defaultParams';
 
 const PatternEditor: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Extract pattern type from pathname or default to 'vortex'
   const getPatternTypeFromPath = (): PatternType => {
     if (pathname.includes('/spiral')) return 'spiral';
+    if (pathname.includes('/medusa')) return 'medusa';
     return 'vortex';
   };
 
@@ -28,13 +29,13 @@ const PatternEditor: React.FC = () => {
   const [params, setParams] = useState<CombinedPatternParams>(
     selectedPattern === 'vortex'
       ? defaultVortexParams
-      : { ...defaultVortexParams, ...defaultSpiralParams }
+      : selectedPattern === 'spiral'
+      ? { ...defaultVortexParams, ...defaultSpiralParams }
+      : defaultMedusaParams
   );
 
-  // Create a reference to the canvas for video export
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Update route when pattern changes
   useEffect(() => {
     if (selectedPattern === 'vortex') {
       router.push('/');
@@ -43,44 +44,27 @@ const PatternEditor: React.FC = () => {
     }
   }, [selectedPattern, router]);
 
-  // Handle pattern selection
   const handlePatternSelect = (pattern: PatternType) => {
-    if (pattern === selectedPattern) return;
-
-    setSelectedPattern(pattern);
-
-    // Reset parameters to defaults for selected pattern
     if (pattern === 'vortex') {
-      setParams(defaultVortexParams);
+      setParams(defaultVortexParams); // Use vortex-specific defaults
     } else if (pattern === 'spiral') {
-      setParams({
-        ...defaultVortexParams,
-        ...defaultSpiralParams,
-      });
+      setParams({ ...defaultVortexParams, ...defaultSpiralParams }); // Combine base and spiral-specific params
+    } else if (pattern === 'medusa') {
+      setParams(defaultMedusaParams); // Use medusa-specific defaults
     }
+    setSelectedPattern(pattern);
   };
 
-  // Handle parameter changes
-  const handleParamChange = (
-    key: keyof CombinedPatternParams,
-    value: number
-  ) => {
-    setParams((prev) => ({ ...prev, [key]: value }));
-  };
-
-  // Handle reset to defaults
   const handleReset = () => {
     if (selectedPattern === 'vortex') {
       setParams(defaultVortexParams);
     } else if (selectedPattern === 'spiral') {
-      setParams({
-        ...defaultVortexParams,
-        ...defaultSpiralParams,
-      });
+      setParams({ ...defaultVortexParams, ...defaultSpiralParams });
+    } else if (selectedPattern === 'medusa') {
+      setParams(defaultMedusaParams);
     }
   };
 
-  // Handle config import
   const handleImport = (
     importedParams: CombinedPatternParams,
     patternType: PatternType
@@ -88,11 +72,15 @@ const PatternEditor: React.FC = () => {
     setParams(importedParams);
     setSelectedPattern(patternType);
   };
-
+  const handleParamChange = (
+    key: keyof CombinedPatternParams,
+    value: number
+  ) => {
+    setParams((prev) => ({ ...prev, [key]: value }));
+  };
   return (
     <div className="h-screen w-screen">
       <ResizablePanelGroup direction="horizontal">
-        {/* Left Sidebar: All Parameters */}
         <ResizablePanel defaultSize={25} minSize={20}>
           <PatternControlsPanel
             params={params}
@@ -103,11 +91,8 @@ const PatternEditor: React.FC = () => {
             onImport={handleImport}
           />
         </ResizablePanel>
-
-        {/* Main Content */}
         <ResizablePanel defaultSize={75}>
           <ResizablePanelGroup direction="vertical">
-            {/* Canvas Area */}
             <ResizablePanel defaultSize={80}>
               <PatternCanvas
                 ref={canvasRef}
@@ -116,8 +101,6 @@ const PatternEditor: React.FC = () => {
                 onParamChange={handleParamChange}
               />
             </ResizablePanel>
-
-            {/* Bottom Sidebar: Pattern Navigation */}
             <ResizablePanel defaultSize={20}>
               <PatternNavigation
                 selectedPattern={selectedPattern}

@@ -1,12 +1,12 @@
 import {
   PatternParams,
-  VideoExportOptions,
   SpiralPatternParams,
+  CombinedPatternParams,
+  VideoExportOptions,
 } from './types';
 
 // Default vortex pattern parameters
 export const defaultVortexParams: PatternParams = {
-  // General
   speed: 1,
   scale: 1,
   intensity: 1,
@@ -14,26 +14,20 @@ export const defaultVortexParams: PatternParams = {
   xOffset: 130,
   yOffset: 70,
   dotSize: 1,
-  // Loop settings
   xMax: 200,
   yMax: 200,
   step: 2,
-  // k / e calculation
   xDivisor: 10,
   xSubtractor: 10,
   yDivisor: 8,
   ySubtractor: 12,
-  // o calculation
   oBase: 2,
   oDivisor: 3,
-  // Distortion sine/cosine factors
   sinDivisor: 2,
   cosMultiplier: 0.8,
-  // px calculation factors
   xKMultiplier: 4,
   xScale: 0.7,
   koMultiplier: 2,
-  // py calculation factors
   yDivFactor: 5,
   yScale: 0.7,
   eoMultiplier: 1,
@@ -41,13 +35,12 @@ export const defaultVortexParams: PatternParams = {
 
 // Default spiral pattern parameters
 export const defaultSpiralParams: SpiralPatternParams = {
-  // Specific parameters for the spiral pattern
   xMax: 90,
   yMax: 90,
   xDivisor: 4,
   xSubtractor: 12,
   yDivisor: 9,
-  ySubtractor: 9, // Positive value instead of negative as in vortex
+  ySubtractor: 9,
   oDivisor: 9,
   yDivFactor: 30,
   cosMultiplier: 9,
@@ -59,10 +52,49 @@ export const defaultSpiralParams: SpiralPatternParams = {
   eoMultiplier: 4,
 };
 
+// Default medusa pattern parameters
+export const defaultMedusaParams: CombinedPatternParams = {
+  speed: 1,
+  scale: 1,
+  intensity: 1,
+  distortion: 1,
+  xOffset: 0,
+  yOffset: 0,
+  dotSize: 1,
+  xMax: 200,
+  yMax: 200,
+  step: 2,
+  xDivisor: 8,
+  xSubtractor: 12.5,
+  yDivisor: 8,
+  ySubtractor: 12.5,
+  magDivisor: 169,
+  dBase: 0.5,
+  dMultiplier: 5,
+  timeMultiplier: 4,
+  sinDMultiplier: 2,
+  cosDMultiplier: 3,
+  oMultiplierInCos: 9,
+  pxOffset: 100,
+  pyOffset: 125,
+  oScale: 135,
+  yScale: 4,
+  oBase: 0,
+  sinDivisor: 1,
+  xKMultiplier: 0,
+  koMultiplier: 0,
+  yDivFactor: 1,
+  eoMultiplier: 0,
+  // Add missing required properties
+  oDivisor: 1,
+  cosMultiplier: 1,
+  xScale: 1,
+};
+
 // Default video export options
 export const defaultVideoOptions: VideoExportOptions = {
   duration: 10,
   fps: 30,
-  bitrate: 4000000, // 4 Mbps bitrate for medium quality
+  bitrate: 4000000,
   quality: 'medium',
 };

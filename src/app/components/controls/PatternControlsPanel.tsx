@@ -10,6 +10,7 @@ import GeneralControls from './GeneralControls';
 import LoopControls from './LoopControls';
 import SpiralSpecificControls from './SpiralSpecificControls';
 import VortexSpecificControls from './VortexSpecificControls';
+import MedusaSpecificControls from './MedusaSpecificControls';
 
 interface PatternControlsPanelProps {
   params: CombinedPatternParams;
@@ -63,6 +64,14 @@ const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
           {patternType === 'spiral' && (
             <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
               <SpiralSpecificControls
+                params={params}
+                onChange={onParamChange}
+              />
+            </div>
+          )}
+          {patternType === 'medusa' && (
+            <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+              <MedusaSpecificControls
                 params={params}
                 onChange={onParamChange}
               />
