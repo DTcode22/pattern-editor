@@ -7,9 +7,9 @@
     "dotSize": 1.5,
     "backgroundColor": "rgb(5, 5, 15)",
     "rMin": 5,
-    "rMax": 120,
-    "rStep": 2,
-    "densityFactor": 0.8,
+    "rMax": 80,
+    "rStep": 3,
+    "densityFactor": 0.6,
     "radiusDivisor": 10,
     "radiusTimeFactor": 0.5,
     "radiusAmplitude": 0.2,
@@ -62,7 +62,7 @@
     {
       "parameter": "densityFactor",
       "startValue": 0.5,
-      "endValue": 1.2,
+      "endValue": 1.0,
       "duration": 25,
       "easing": "cubic"
     }

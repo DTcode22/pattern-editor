@@ -71,11 +71,11 @@ export const defaultEmergenceParams: EmergencePatternParams = {
   dotSize: 1.5,
   backgroundColor: 'rgb(5, 5, 15)',
 
-  // Radius settings
+  // Radius settings - reduced range and increased step for better performance
   rMin: 5,
-  rMax: 120,
-  rStep: 2,
-  densityFactor: 0.8,
+  rMax: 80, // Reduced from 120
+  rStep: 3, // Increased from 2
+  densityFactor: 0.6, // Reduced from 0.8
 
   // Radius modifiers
   radiusDivisor: 10,
