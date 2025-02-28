@@ -2,12 +2,24 @@
 
 import { Button } from '@/components/ui/button';
 import { Save, Download } from 'lucide-react';
-import { CombinedPatternParams, PatternType } from '../../lib/patterns/types';
+import {
+  CombinedPatternParams,
+  PatternType,
+  ParameterAnimation,
+} from '../../lib/patterns/types';
 
 interface ConfigControlsProps {
   params: CombinedPatternParams;
   patternType: PatternType;
   onImport: (params: CombinedPatternParams, patternType: PatternType) => void;
+}
+
+// Define an interface for the configuration object
+interface Config {
+  params: CombinedPatternParams;
+  pattern: PatternType;
+  timestamp: string;
+  parameterAnimations?: ParameterAnimation[]; // Optional, as it may not always be present
 }
 
 const ConfigControls: React.FC<ConfigControlsProps> = ({
@@ -41,14 +53,16 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
   };
 
   // Helper function to download the configuration
-  const downloadConfig = (config: any) => {
+  const downloadConfig = (config: Config) => {
     const blob = new Blob([JSON.stringify(config, null, 2)], {
       type: 'application/json',
     });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `pattern-config-${patternType}-${new Date().getTime()}.json`;
+    a.download = `pattern-config-${
+      config.pattern
+    }-${new Date().getTime()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
