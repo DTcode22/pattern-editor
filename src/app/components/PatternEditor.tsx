@@ -10,6 +10,8 @@ import { PatternType, CombinedPatternParams } from '../lib/patterns/types';
 import {
   defaultVortexParams,
   defaultSpiralParams,
+  defaultEmergenceParams,
+  defaultEmergenceAnimations,
 } from '../lib/patterns/defaultParams';
 
 const PatternEditor: React.FC = () => {
@@ -19,6 +21,7 @@ const PatternEditor: React.FC = () => {
   // Extract pattern type from pathname or default to 'vortex'
   const getPatternTypeFromPath = (): PatternType => {
     if (pathname.includes('/spiral')) return 'spiral';
+    if (pathname.includes('/emergence')) return 'emergence';
     return 'vortex';
   };
 
@@ -28,7 +31,9 @@ const PatternEditor: React.FC = () => {
   const [params, setParams] = useState<CombinedPatternParams>(
     selectedPattern === 'vortex'
       ? defaultVortexParams
-      : { ...defaultVortexParams, ...defaultSpiralParams }
+      : selectedPattern === 'spiral'
+      ? { ...defaultVortexParams, ...defaultSpiralParams }
+      : { ...defaultVortexParams, ...defaultEmergenceParams }
   );
 
   // Create a reference to the canvas for video export
@@ -57,6 +62,11 @@ const PatternEditor: React.FC = () => {
         ...defaultVortexParams,
         ...defaultSpiralParams,
       });
+    } else if (pattern === 'emergence') {
+      setParams({
+        ...defaultVortexParams,
+        ...defaultEmergenceParams,
+      });
     }
   };
 
@@ -76,6 +86,11 @@ const PatternEditor: React.FC = () => {
       setParams({
         ...defaultVortexParams,
         ...defaultSpiralParams,
+      });
+    } else if (selectedPattern === 'emergence') {
+      setParams({
+        ...defaultVortexParams,
+        ...defaultEmergenceParams,
       });
     }
   };

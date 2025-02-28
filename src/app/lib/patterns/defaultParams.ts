@@ -2,6 +2,8 @@ import {
   PatternParams,
   VideoExportOptions,
   SpiralPatternParams,
+  EmergencePatternParams,
+  ParameterAnimation,
 } from './types';
 
 // Default vortex pattern parameters
@@ -58,6 +60,97 @@ export const defaultSpiralParams: SpiralPatternParams = {
   yOffset: 200,
   eoMultiplier: 4,
 };
+
+// Default emergence pattern parameters
+export const defaultEmergenceParams: EmergencePatternParams = {
+  // Basic settings
+  speed: 0.8,
+  scale: 1.6,
+  xOffset: 200,
+  yOffset: 200,
+  dotSize: 1.5,
+  backgroundColor: 'rgb(5, 5, 15)',
+
+  // Radius settings
+  rMin: 5,
+  rMax: 120,
+  rStep: 2,
+  densityFactor: 0.8,
+
+  // Radius modifiers
+  radiusDivisor: 10,
+  radiusTimeFactor: 0.5,
+  radiusAmplitude: 0.2,
+
+  // Angle modifiers
+  angleFrequency: 3,
+  angleTimeFactor: 0.3,
+  angleAmplitude: 0.4,
+
+  // Breathing effect
+  breathPeriod: 8,
+  breathAmplitude: 0.15,
+  breathBase: 1,
+
+  // Rotation effect
+  rotationPeriod: 15,
+  rotationAmplitude: 0.8,
+  rotationBase: 0.2,
+
+  // Wave distortion
+  wavePeriod: 10,
+  waveAmplitude: 12,
+  waveBase: 8,
+  waveFrequency: 4,
+  waveTimeFactor: 0.5,
+
+  // Color settings
+  hueRange: 60,
+  hueSpeed: 10,
+  baseSaturation: 80,
+  saturationRange: 30,
+  baseLightness: 50,
+  lightnessRange: 20,
+  lightnessPulse: 10,
+
+  // Dot size variation
+  dotSizeVariationFactor: 0.5,
+
+  // Cycle period for repeating patterns
+  cyclePeriod: 30,
+};
+
+// Default parameter animations for emergence pattern
+export const defaultEmergenceAnimations: ParameterAnimation[] = [
+  {
+    parameter: 'waveAmplitude',
+    startValue: 2,
+    endValue: 18,
+    duration: 12,
+    easing: 'sinusoidal',
+  },
+  {
+    parameter: 'rotationAmplitude',
+    startValue: 0.2,
+    endValue: 1.2,
+    duration: 15,
+    easing: 'quadratic',
+  },
+  {
+    parameter: 'angleFrequency',
+    startValue: 2,
+    endValue: 5,
+    duration: 20,
+    easing: 'exponential',
+  },
+  {
+    parameter: 'densityFactor',
+    startValue: 0.5,
+    endValue: 1.2,
+    duration: 25,
+    easing: 'cubic',
+  },
+];
 
 // Default video export options
 export const defaultVideoOptions: VideoExportOptions = {

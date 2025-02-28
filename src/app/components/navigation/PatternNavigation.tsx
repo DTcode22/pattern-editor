@@ -11,6 +11,7 @@ interface PatternNavigationProps {
 }
 
 const PatternNavigation: React.FC<PatternNavigationProps> = ({
+  selectedPattern,
   onSelectPattern,
 }) => {
   return (
@@ -21,14 +22,23 @@ const PatternNavigation: React.FC<PatternNavigationProps> = ({
           <Button
             className="w-full justify-start"
             onClick={() => onSelectPattern('vortex')}
+            variant={selectedPattern === 'vortex' ? 'default' : 'outline'}
           >
             Vortex
           </Button>
           <Button
             className="w-full justify-start"
             onClick={() => onSelectPattern('spiral')}
+            variant={selectedPattern === 'spiral' ? 'default' : 'outline'}
           >
             Spiral
+          </Button>
+          <Button
+            className="w-full justify-start"
+            onClick={() => onSelectPattern('emergence')}
+            variant={selectedPattern === 'emergence' ? 'default' : 'outline'}
+          >
+            Emergence
           </Button>
           {/* Add more pattern buttons here as needed */}
         </div>

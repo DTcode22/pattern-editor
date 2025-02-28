@@ -144,6 +144,119 @@ const usePatternRenderer = (
       }
     };
 
+    const renderEmergencePattern: RenderPattern = (
+      ctx,
+      canvas,
+      params,
+      time
+    ) => {
+      const cycleTime = time % (params.cyclePeriod || 30);
+
+      // Calculate oscillating parameters based on time
+      const breathingFactor =
+        Math.sin(time / (params.breathPeriod || 8)) *
+          (params.breathAmplitude || 0.15) +
+        (params.breathBase || 1);
+      const rotationFactor =
+        Math.sin(time / (params.rotationPeriod || 15)) *
+          (params.rotationAmplitude || 0.8) +
+        (params.rotationBase || 0.2);
+      const waveFactor =
+        Math.sin(time / (params.wavePeriod || 10)) *
+          (params.waveAmplitude || 12) +
+        (params.waveBase || 8);
+
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = params.backgroundColor || 'rgb(5, 5, 15)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the pattern
+      for (
+        let r = params.rMin || 5;
+        r <= (params.rMax || 120);
+        r += params.rStep || 2
+      ) {
+        // Calculate points around a circle
+        const pointCount = Math.floor(r * (params.densityFactor || 0.8));
+
+        for (let i = 0; i < pointCount; i++) {
+          // Base angle
+          const angle = (i / pointCount) * Math.PI * 2;
+
+          // Calculate modifiers based on radius and angle
+          const radiusModifier =
+            1 +
+            Math.sin(
+              r / (params.radiusDivisor || 10) +
+                time * (params.radiusTimeFactor || 0.5)
+            ) *
+              (params.radiusAmplitude || 0.2);
+          const angleModifier =
+            Math.sin(
+              angle * (params.angleFrequency || 3) +
+                time * (params.angleTimeFactor || 0.3)
+            ) * (params.angleAmplitude || 0.4);
+
+          // Modified radius and angle
+          const modifiedRadius = r * radiusModifier * breathingFactor;
+          const modifiedAngle =
+            angle + angleModifier + (r / (params.rMax || 120)) * rotationFactor;
+
+          // Calculate coordinates
+          const x = Math.cos(modifiedAngle) * modifiedRadius;
+          const y = Math.sin(modifiedAngle) * modifiedRadius;
+
+          // Add wave distortion
+          const waveDistortion =
+            Math.sin(
+              angle * (params.waveFrequency || 4) +
+                time * (params.waveTimeFactor || 0.5)
+            ) *
+            waveFactor *
+            (r / (params.rMax || 120));
+          const finalX = x + waveDistortion * Math.cos(angle + Math.PI / 2);
+          const finalY = y + waveDistortion * Math.sin(angle + Math.PI / 2);
+
+          // Scale and offset
+          const px = finalX * (params.scale || 1.6) + (params.xOffset || 200);
+          const py = finalY * (params.scale || 1.6) + (params.yOffset || 200);
+
+          // Color based on position and time
+          const hue =
+            ((angle / (Math.PI * 2)) * (params.hueRange || 60) +
+              time * (params.hueSpeed || 10)) %
+            360;
+          const saturation =
+            (params.baseSaturation || 80) -
+            (r / (params.rMax || 120)) * (params.saturationRange || 30);
+          const lightness =
+            (params.baseLightness || 50) +
+            (r / (params.rMax || 120)) * (params.lightnessRange || 20) +
+            Math.sin(angle * 3 + time) * (params.lightnessPulse || 10);
+
+          ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+          // Size variation based on radius
+          const dotSizeVariation =
+            (params.dotSize || 1.5) *
+            (1 -
+              (r / (params.rMax || 120)) *
+                (params.dotSizeVariationFactor || 0.5));
+
+          ctx.beginPath();
+          ctx.arc(
+            (px * canvas.width) / 400,
+            (py * canvas.height) / 400,
+            Math.max(0.5, dotSizeVariation),
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+      }
+    };
+
     const animate = () => {
       const time = (Date.now() - startTime) * 0.001 * params.speed;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -153,6 +266,8 @@ const usePatternRenderer = (
         renderVortexPattern(ctx, canvas, params, time);
       } else if (patternType === 'spiral') {
         renderSpiralPattern(ctx, canvas, params, time);
+      } else if (patternType === 'emergence') {
+        renderEmergencePattern(ctx, canvas, params, time);
       }
       ctx.restore();
       animationRef.current = requestAnimationFrame(animate);

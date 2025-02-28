@@ -1,0 +1,72 @@
+{
+  "params": {
+    "speed": 0.8,
+    "scale": 1.6,
+    "xOffset": 200,
+    "yOffset": 200,
+    "dotSize": 1.5,
+    "backgroundColor": "rgb(5, 5, 15)",
+    "rMin": 5,
+    "rMax": 120,
+    "rStep": 2,
+    "densityFactor": 0.8,
+    "radiusDivisor": 10,
+    "radiusTimeFactor": 0.5,
+    "radiusAmplitude": 0.2,
+    "angleFrequency": 3,
+    "angleTimeFactor": 0.3,
+    "angleAmplitude": 0.4,
+    "breathPeriod": 8,
+    "breathAmplitude": 0.15,
+    "breathBase": 1,
+    "rotationPeriod": 15,
+    "rotationAmplitude": 0.8,
+    "rotationBase": 0.2,
+    "wavePeriod": 10,
+    "waveAmplitude": 12,
+    "waveBase": 8,
+    "waveFrequency": 4,
+    "waveTimeFactor": 0.5,
+    "hueRange": 60,
+    "hueSpeed": 10,
+    "baseSaturation": 80,
+    "saturationRange": 30,
+    "baseLightness": 50,
+    "lightnessRange": 20,
+    "lightnessPulse": 10,
+    "dotSizeVariationFactor": 0.5,
+    "cyclePeriod": 30
+  },
+  "parameterAnimations": [
+    {
+      "parameter": "waveAmplitude",
+      "startValue": 2,
+      "endValue": 18,
+      "duration": 12,
+      "easing": "sinusoidal"
+    },
+    {
+      "parameter": "rotationAmplitude",
+      "startValue": 0.2,
+      "endValue": 1.2,
+      "duration": 15,
+      "easing": "quadratic"
+    },
+    {
+      "parameter": "angleFrequency",
+      "startValue": 2,
+      "endValue": 5,
+      "duration": 20,
+      "easing": "exponential"
+    },
+    {
+      "parameter": "densityFactor",
+      "startValue": 0.5,
+      "endValue": 1.2,
+      "duration": 25,
+      "easing": "cubic"
+    }
+  ],
+  "pattern": "emergence",
+  "timestamp": "2025-02-28T00:00:00.000Z"
+}

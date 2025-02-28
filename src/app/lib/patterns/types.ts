@@ -46,9 +46,51 @@ export interface SpiralPatternParams {
   eoMultiplier: number;
 }
 
+// Emergence pattern specific parameters
+export interface EmergencePatternParams {
+  // These parameters override the base ones in PatternParams
+  speed: number;
+  scale: number;
+  xOffset: number;
+  yOffset: number;
+  dotSize: number;
+  backgroundColor: string;
+  rMin: number;
+  rMax: number;
+  rStep: number;
+  densityFactor: number;
+  radiusDivisor: number;
+  radiusTimeFactor: number;
+  radiusAmplitude: number;
+  angleFrequency: number;
+  angleTimeFactor: number;
+  angleAmplitude: number;
+  breathPeriod: number;
+  breathAmplitude: number;
+  breathBase: number;
+  rotationPeriod: number;
+  rotationAmplitude: number;
+  rotationBase: number;
+  wavePeriod: number;
+  waveAmplitude: number;
+  waveBase: number;
+  waveFrequency: number;
+  waveTimeFactor: number;
+  hueRange: number;
+  hueSpeed: number;
+  baseSaturation: number;
+  saturationRange: number;
+  baseLightness: number;
+  lightnessRange: number;
+  lightnessPulse: number;
+  dotSizeVariationFactor: number;
+  cyclePeriod: number;
+}
+
 // Combined pattern parameters
 export type CombinedPatternParams = PatternParams &
-  Partial<SpiralPatternParams>;
+  Partial<SpiralPatternParams> &
+  Partial<EmergencePatternParams>;
 
 // Video export options interface
 export interface VideoExportOptions {
@@ -59,4 +101,13 @@ export interface VideoExportOptions {
 }
 
 // Pattern types
-export type PatternType = 'vortex' | 'spiral'; // Add other patterns as needed
+export type PatternType = 'vortex' | 'spiral' | 'emergence'; // Add other patterns as needed
+
+// Parameter animation interface
+export interface ParameterAnimation {
+  parameter: string;
+  startValue: number;
+  endValue: number;
+  duration: number;
+  easing: 'sinusoidal' | 'quadratic' | 'exponential' | 'cubic' | 'linear';
+}
