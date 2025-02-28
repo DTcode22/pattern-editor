@@ -11,7 +11,6 @@ interface PatternNavigationProps {
 }
 
 const PatternNavigation: React.FC<PatternNavigationProps> = ({
-  selectedPattern,
   onSelectPattern,
 }) => {
   return (
