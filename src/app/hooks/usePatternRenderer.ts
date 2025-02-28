@@ -97,6 +97,23 @@ const usePatternRenderer = (
       return result;
     };
 
+    // Get custom animations from localStorage if available
+    const getCustomAnimations = (): ParameterAnimation[] => {
+      try {
+        const storedAnimations = localStorage.getItem('emergenceAnimations');
+        if (storedAnimations) {
+          const parsedAnimations = JSON.parse(storedAnimations);
+          if (Array.isArray(parsedAnimations) && parsedAnimations.length > 0) {
+            console.log('Using custom animations from localStorage');
+            return parsedAnimations;
+          }
+        }
+      } catch (error) {
+        console.error('Error reading animations from localStorage:', error);
+      }
+      return defaultEmergenceAnimations;
+    };
+
     const renderVortexPattern: RenderPattern = (ctx, canvas, params, time) => {
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -210,13 +227,21 @@ const usePatternRenderer = (
       params,
       time
     ) => {
+      // Calculate cycle time for pattern repetition
+      const cycleTime = time % (params.cyclePeriod || 30);
+      const cycleProgress = cycleTime / (params.cyclePeriod || 30); // 0 to 1 progress through cycle
+
+      // Get animations (custom or default)
+      const animations =
+        patternType === 'emergence'
+          ? getCustomAnimations()
+          : defaultEmergenceAnimations;
+
       // Apply parameter animations for emergence pattern
       const animatedParams =
         patternType === 'emergence'
-          ? applyParameterAnimations(params, defaultEmergenceAnimations, time)
+          ? applyParameterAnimations(params, animations, time)
           : params;
-
-      const cycleTime = time % (animatedParams.cyclePeriod || 30);
 
       // Calculate oscillating parameters based on time
       const breathingFactor =
@@ -263,8 +288,10 @@ const usePatternRenderer = (
 
         for (let i = 0; i < pointCount; i++) {
           try {
-            // Base angle
-            const angle = (i / pointCount) * Math.PI * 2;
+            // Base angle with cycle progression for rotation over time
+            const angle =
+              (i / pointCount) * Math.PI * 2 +
+              cycleProgress * Math.PI * 2 * 0.1;
 
             // Calculate modifiers based on radius and angle
             const radiusModifier =
@@ -280,8 +307,12 @@ const usePatternRenderer = (
                   time * (animatedParams.angleTimeFactor || 0.3)
               ) * (animatedParams.angleAmplitude || 0.4);
 
-            // Modified radius and angle
-            const modifiedRadius = r * radiusModifier * breathingFactor;
+            // Modified radius and angle with cycle influence
+            const modifiedRadius =
+              r *
+              radiusModifier *
+              breathingFactor *
+              (1 + Math.sin(cycleProgress * Math.PI * 2) * 0.05);
             const modifiedAngle =
               angle + angleModifier + (r / rMax) * rotationFactor;
 
@@ -289,11 +320,12 @@ const usePatternRenderer = (
             const x = Math.cos(modifiedAngle) * modifiedRadius;
             const y = Math.sin(modifiedAngle) * modifiedRadius;
 
-            // Add wave distortion
+            // Add wave distortion with cycle influence
             const waveDistortion =
               Math.sin(
                 angle * (animatedParams.waveFrequency || 4) +
-                  time * (animatedParams.waveTimeFactor || 0.5)
+                  time * (animatedParams.waveTimeFactor || 0.5) +
+                  cycleProgress * Math.PI * 2
               ) *
               waveFactor *
               (r / rMax);
@@ -308,10 +340,11 @@ const usePatternRenderer = (
               finalY * (animatedParams.scale || 1.6) +
               (animatedParams.yOffset || 200);
 
-            // Color based on position and time
+            // Color based on position and time with cycle influence
             const hue =
               ((angle / (Math.PI * 2)) * (animatedParams.hueRange || 60) +
-                time * (animatedParams.hueSpeed || 10)) %
+                time * (animatedParams.hueSpeed || 10) +
+                cycleProgress * 30) % // Add cycle-based hue shift
               360;
             const saturation =
               (animatedParams.baseSaturation || 80) -
@@ -319,15 +352,17 @@ const usePatternRenderer = (
             const lightness =
               (animatedParams.baseLightness || 50) +
               (r / rMax) * (animatedParams.lightnessRange || 20) +
-              Math.sin(angle * 3 + time) *
+              Math.sin(angle * 3 + time + cycleProgress * Math.PI) *
                 (animatedParams.lightnessPulse || 10);
 
             ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 
-            // Size variation based on radius
+            // Size variation based on radius with cycle influence
             const dotSizeVariation =
               (animatedParams.dotSize || 1.5) *
-              (1 - (r / rMax) * (animatedParams.dotSizeVariationFactor || 0.5));
+              (1 -
+                (r / rMax) * (animatedParams.dotSizeVariationFactor || 0.5)) *
+              (1 + Math.sin(cycleProgress * Math.PI * 4) * 0.1); // Subtle size pulsing based on cycle
 
             ctx.beginPath();
             ctx.arc(
@@ -348,17 +383,32 @@ const usePatternRenderer = (
 
     const animate = () => {
       const time = (Date.now() - startTime) * 0.001 * params.speed;
+
+      // Clear canvas with proper alpha compositing for better performance
+      ctx.globalCompositeOperation = 'source-over';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Apply transformations
       ctx.save();
       ctx.scale(zoom, zoom);
-      if (patternType === 'vortex') {
-        renderVortexPattern(ctx, canvas, params, time);
-      } else if (patternType === 'spiral') {
-        renderSpiralPattern(ctx, canvas, params, time);
-      } else if (patternType === 'emergence') {
-        renderEmergencePattern(ctx, canvas, params, time);
+
+      // Render the appropriate pattern
+      try {
+        if (patternType === 'vortex') {
+          renderVortexPattern(ctx, canvas, params, time);
+        } else if (patternType === 'spiral') {
+          renderSpiralPattern(ctx, canvas, params, time);
+        } else if (patternType === 'emergence') {
+          renderEmergencePattern(ctx, canvas, params, time);
+        }
+      } catch (error) {
+        console.error('Error rendering pattern:', error);
       }
+
+      // Restore canvas state
       ctx.restore();
+
+      // Request next frame
       animationRef.current = requestAnimationFrame(animate);
     };
 

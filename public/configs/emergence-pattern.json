@@ -41,30 +41,44 @@
     {
       "parameter": "waveAmplitude",
       "startValue": 2,
-      "endValue": 18,
+      "endValue": 15,
       "duration": 12,
       "easing": "sinusoidal"
     },
     {
       "parameter": "rotationAmplitude",
       "startValue": 0.2,
-      "endValue": 1.2,
+      "endValue": 1.0,
       "duration": 15,
       "easing": "quadratic"
     },
     {
       "parameter": "angleFrequency",
       "startValue": 2,
-      "endValue": 5,
+      "endValue": 4,
       "duration": 20,
       "easing": "exponential"
     },
     {
       "parameter": "densityFactor",
       "startValue": 0.5,
-      "endValue": 1.0,
+      "endValue": 0.9,
       "duration": 25,
       "easing": "cubic"
+    },
+    {
+      "parameter": "hueSpeed",
+      "startValue": 5,
+      "endValue": 15,
+      "duration": 30,
+      "easing": "sinusoidal"
+    },
+    {
+      "parameter": "breathAmplitude",
+      "startValue": 0.1,
+      "endValue": 0.2,
+      "duration": 15,
+      "easing": "sinusoidal"
     }
   ],
   "pattern": "emergence",

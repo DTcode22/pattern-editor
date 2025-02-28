@@ -22,6 +22,26 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
       pattern: patternType,
       timestamp: new Date().toISOString(),
     };
+
+    // Add parameter animations for emergence pattern
+    if (patternType === 'emergence') {
+      // Import animations dynamically to avoid circular dependencies
+      import('../../lib/patterns/defaultParams').then(
+        ({ defaultEmergenceAnimations }) => {
+          const configWithAnimations = {
+            ...config,
+            parameterAnimations: defaultEmergenceAnimations,
+          };
+          downloadConfig(configWithAnimations);
+        }
+      );
+    } else {
+      downloadConfig(config);
+    }
+  };
+
+  // Helper function to download the configuration
+  const downloadConfig = (config: any) => {
     const blob = new Blob([JSON.stringify(config, null, 2)], {
       type: 'application/json',
     });
@@ -36,17 +56,54 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
   };
 
   // Function to handle configuration import
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = (event) => {
       try {
-        const config = JSON.parse(e.target?.result as string);
+        const config = JSON.parse(event.target?.result as string);
+
+        // Validate the imported configuration
+        if (!config.params || !config.pattern) {
+          alert('Invalid configuration file. Missing params or pattern.');
+          return;
+        }
+
+        // Import the configuration
         onImport(config.params, config.pattern);
+
+        // Handle parameter animations if they exist
+        if (
+          config.parameterAnimations &&
+          config.parameterAnimations.length > 0
+        ) {
+          console.log(
+            'Imported parameter animations:',
+            config.parameterAnimations
+          );
+
+          // If it's an emergence pattern, we could store the animations in localStorage
+          // for later use, or pass them to a global state manager
+          if (config.pattern === 'emergence') {
+            try {
+              localStorage.setItem(
+                'emergenceAnimations',
+                JSON.stringify(config.parameterAnimations)
+              );
+              console.log('Stored emergence animations in localStorage');
+            } catch (error) {
+              console.error(
+                'Failed to store animations in localStorage:',
+                error
+              );
+            }
+          }
+        }
       } catch (error) {
         console.error('Error importing configuration:', error);
+        alert('Error importing configuration. Please check the file format.');
       }
     };
     reader.readAsText(file);

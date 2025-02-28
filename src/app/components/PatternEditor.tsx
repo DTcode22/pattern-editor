@@ -11,7 +11,6 @@ import {
   defaultVortexParams,
   defaultSpiralParams,
   defaultEmergenceParams,
-  defaultEmergenceAnimations,
 } from '../lib/patterns/defaultParams';
 
 const PatternEditor: React.FC = () => {
