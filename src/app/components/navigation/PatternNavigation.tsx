@@ -14,7 +14,7 @@ const PatternNavigation: React.FC<PatternNavigationProps> = ({
   onSelectPattern,
 }) => {
   return (
-    <div className="h-full bg-[url('/asdf.jpg')] bg-bottom bg-cover">
+    <div className="h-full bg-zinc-800">
       <ScrollArea className="h-full p-4">
         <h2 className="text-lg font-bold mb-4 text-white">Patterns</h2>
         <div className="space-y-2">

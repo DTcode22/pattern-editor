@@ -29,7 +29,7 @@ const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
   onImport,
 }) => {
   return (
-    <div className="h-full bg-[url('/asdf.jpg')] bg-left bg-cover">
+    <div className="h-full bg-zinc-800">
       <ScrollArea className="h-full p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-white">Parameters</h2>
