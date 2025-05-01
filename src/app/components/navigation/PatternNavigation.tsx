@@ -30,7 +30,6 @@ const PatternNavigation: React.FC<PatternNavigationProps> = ({
           >
             Spiral
           </Button>
-          {/* Add more pattern buttons here as needed */}
         </div>
       </ScrollArea>
     </div>

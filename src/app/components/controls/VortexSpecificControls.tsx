@@ -15,7 +15,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
 }) => {
   return (
     <div className="space-y-5">
-      {/* k / e Calculation */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">
           k / e Calculation
@@ -62,7 +61,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
         />
       </div>
 
-      {/* o Calculation */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">o Calculation</h3>
         <SliderControl
@@ -87,7 +85,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
         />
       </div>
 
-      {/* Distortion Factors */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">
           Distortion Factors
@@ -114,7 +111,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
         />
       </div>
 
-      {/* px Calculation */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">px Calculation</h3>
         <SliderControl
@@ -149,7 +145,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
         />
       </div>
 
-      {/* py Calculation */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">py Calculation</h3>
         <SliderControl

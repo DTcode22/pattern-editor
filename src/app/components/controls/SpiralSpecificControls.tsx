@@ -15,7 +15,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
 }) => {
   return (
     <div className="space-y-5">
-      {/* k / e Calculation */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">
           k / e Calculation
@@ -62,7 +61,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
         />
       </div>
 
-      {/* o Calculation */}
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">o Calculation</h3>
         <SliderControl
@@ -77,7 +75,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
         />
       </div>
 
-      {/* Phase and Distortion */}
       <div className="space-y-3">
         <h3 className="font-semibold">Phase & Distortion</h3>
         <SliderControl
@@ -121,7 +118,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
         />
       </div>
 
-      {/* Position & Scale */}
       <div className="space-y-3">
         <h3 className="font-semibold">Scale</h3>
         <SliderControl
@@ -134,7 +130,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           value={params.xScale}
           onChange={onChange}
         />
-        {/* X and Y offsets are now controlled by dragging on the canvas */}
       </div>
     </div>
   );

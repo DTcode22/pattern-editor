@@ -16,7 +16,6 @@ const PatternEditor: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Extract pattern type from pathname or default to 'vortex'
   const getPatternTypeFromPath = (): PatternType => {
     if (pathname.includes('/spiral')) return 'spiral';
     return 'vortex';
@@ -31,10 +30,8 @@ const PatternEditor: React.FC = () => {
       : { ...defaultVortexParams, ...defaultSpiralParams }
   );
 
-  // Create a reference to the canvas for video export
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Update route when pattern changes
   useEffect(() => {
     if (selectedPattern === 'vortex') {
       router.push('/');
@@ -43,13 +40,11 @@ const PatternEditor: React.FC = () => {
     }
   }, [selectedPattern, router]);
 
-  // Handle pattern selection
   const handlePatternSelect = (pattern: PatternType) => {
     if (pattern === selectedPattern) return;
 
     setSelectedPattern(pattern);
 
-    // Reset parameters to defaults for selected pattern
     if (pattern === 'vortex') {
       setParams(defaultVortexParams);
     } else if (pattern === 'spiral') {
@@ -60,7 +55,6 @@ const PatternEditor: React.FC = () => {
     }
   };
 
-  // Handle parameter changes
   const handleParamChange = (
     key: keyof CombinedPatternParams,
     value: number
@@ -68,7 +62,6 @@ const PatternEditor: React.FC = () => {
     setParams((prev) => ({ ...prev, [key]: value }));
   };
 
-  // Handle reset to defaults
   const handleReset = () => {
     if (selectedPattern === 'vortex') {
       setParams(defaultVortexParams);
@@ -80,7 +73,6 @@ const PatternEditor: React.FC = () => {
     }
   };
 
-  // Handle config import
   const handleImport = (
     importedParams: CombinedPatternParams,
     patternType: PatternType
@@ -92,7 +84,6 @@ const PatternEditor: React.FC = () => {
   return (
     <div className="h-screen w-screen">
       <ResizablePanelGroup direction="horizontal">
-        {/* Left Sidebar: All Parameters */}
         <ResizablePanel defaultSize={25} minSize={20}>
           <PatternControlsPanel
             params={params}
@@ -104,10 +95,8 @@ const PatternEditor: React.FC = () => {
           />
         </ResizablePanel>
 
-        {/* Main Content */}
         <ResizablePanel defaultSize={75}>
           <ResizablePanelGroup direction="vertical">
-            {/* Canvas Area */}
             <ResizablePanel defaultSize={80}>
               <PatternCanvas
                 ref={canvasRef}
@@ -117,7 +106,6 @@ const PatternEditor: React.FC = () => {
               />
             </ResizablePanel>
 
-            {/* Bottom Sidebar: Pattern Navigation */}
             <ResizablePanel defaultSize={20}>
               <PatternNavigation
                 selectedPattern={selectedPattern}

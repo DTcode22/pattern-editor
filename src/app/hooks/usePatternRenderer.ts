@@ -38,23 +38,19 @@ const usePatternRenderer = (
     const startTime = Date.now();
 
     const renderVortexPattern: RenderPattern = (ctx, canvas, params, time) => {
-      // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render background
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'white';
 
-      // Loop through defined iterations using tweakable parameters.
       for (let y = 0; y <= params.yMax; y += params.step) {
         for (let x = 0; x <= params.xMax; x += params.step) {
-          // k and e calculation with tweakable divisors and subtractors.
           const k = (x / params.xDivisor - params.xSubtractor) * params.scale;
           const e = (y / params.yDivisor - params.ySubtractor) * params.scale;
           const mag = Math.sqrt(k * k + e * e);
           const o = params.oBase - mag / params.oDivisor;
-          // d is calculated using distortion, intensity and tweakable sine/cosine factors.
+
           const d =
             -params.distortion *
             Math.abs(
@@ -62,7 +58,7 @@ const usePatternRenderer = (
                 Math.cos(e * params.cosMultiplier)
             ) *
             params.intensity;
-          // Calculate px and py with additional multipliers and scales.
+
           const px =
             (x - d * k * params.xKMultiplier + d * k * Math.sin(d + time)) *
               params.xScale +
@@ -87,36 +83,24 @@ const usePatternRenderer = (
     };
 
     const renderSpiralPattern: RenderPattern = (ctx, canvas, params, time) => {
-      // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render background
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = 'white';
 
-      // Loop through defined iterations using tweakable parameters
-      // We'll use a similar approach to the user's code but maintain our looping structure
-      // const pointsPerIteration = (params.xMax * params.yMax) / params.step;
-      // const maxPoints = Math.min(20000, pointsPerIteration); // Cap at 20000 points for performance
-
       for (let y = 0; y <= params.yMax; y += params.step) {
         for (let x = 0; x <= params.xMax; x += params.step) {
-          // Calculate k and e using the provided parameters
           const k = x / params.xDivisor - params.xSubtractor;
           const e = y / params.yDivisor + params.ySubtractor;
 
-          // Skip division by zero
           if (Math.abs(k) < 0.001) continue;
 
-          // Calculate magnitude and o
           const mag = Math.sqrt(k * k + e * e);
           const o = mag / params.oDivisor;
 
-          // Calculate c (phase term)
           const c = (o * e) / params.yDivFactor - time / 8;
 
-          // Calculate q (intermediate x-coordinate)
           const q =
             x +
             99 +
@@ -127,7 +111,6 @@ const usePatternRenderer = (
                 Math.cos(y / params.yDivisor) / 0.7) *
               Math.sin(o * params.koMultiplier - time * 2);
 
-          // Final coordinates
           const px = q * params.xScale * Math.sin(c) + params.xOffset;
           const py =
             params.yOffset +

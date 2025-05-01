@@ -15,7 +15,6 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
   patternType,
   onImport,
 }) => {
-  // Function to export configuration as JSON
   const exportConfiguration = () => {
     const config = {
       params,
@@ -35,7 +34,6 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  // Function to handle configuration import
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -54,7 +52,6 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
 
   return (
     <div className="flex gap-2">
-      {/* Export Config Button */}
       <Button
         variant="outline"
         size="sm"
@@ -64,7 +61,6 @@ const ConfigControls: React.FC<ConfigControlsProps> = ({
         <Save className="h-4 w-4" />
       </Button>
 
-      {/* Import Config Button */}
       <div className="relative">
         <input
           type="file"

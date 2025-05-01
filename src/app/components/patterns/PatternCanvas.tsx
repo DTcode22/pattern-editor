@@ -17,7 +17,6 @@ const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-    // Pass the internal ref to the forwarded ref
     React.useImperativeHandle(
       ref,
       () => canvasRef.current as HTMLCanvasElement
@@ -32,15 +31,11 @@ const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
       (e: React.MouseEvent) => {
         if (!isDragging || !onParamChange) return;
 
-        // Calculate the distance moved
         const dx = (e.clientX - dragStart.x) / 3;
         const dy = (e.clientY - dragStart.y) / 3;
 
-        // Update the drag start position for the next move
         setDragStart({ x: e.clientX, y: e.clientY });
 
-        // Update offset parameters (moving in the opposite direction of drag)
-        // Scale the movement by 1 for a more reasonable ratio
         onParamChange('xOffset', params.xOffset + dx);
         onParamChange('yOffset', params.yOffset + dy);
       },

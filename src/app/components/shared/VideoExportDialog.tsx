@@ -37,11 +37,8 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
     setIsExporting(true);
     setExportProgress(0);
 
-    // We need to capture the original canvas stream directly
-    // instead of making a static copy, to record the animation
     const stream = canvas.captureStream(videoOptions.fps);
 
-    // Try different MIME types in order of preference for better compatibility
     const mimeTypes = [
       'video/webm;codecs=vp9',
       'video/webm;codecs=vp8',
@@ -62,7 +59,6 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
       return;
     }
 
-    // Use the best codec available and the selected bitrate
     const options: MediaRecorderOptions = {
       mimeType: selectedMimeType,
       videoBitsPerSecond: videoOptions.bitrate,
@@ -74,7 +70,6 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
 
       const chunks: BlobPart[] = [];
 
-      // Request more frequent data chunks for better quality
       mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
           chunks.push(e.data);
@@ -102,12 +97,10 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
         }
       };
 
-      // Start recording with frequent data collection (smaller time slices = higher quality)
-      mediaRecorder.start(20); // Collect data every 20ms for smoother output
+      mediaRecorder.start(20);
 
-      // Stop recording after specified duration
-      const duration = videoOptions.duration * 1000; // Convert to milliseconds
-      const updateInterval = 100; // Update progress every 100ms
+      const duration = videoOptions.duration * 1000;
+      const updateInterval = 100;
       let elapsed = 0;
 
       const progressInterval = setInterval(() => {
@@ -135,18 +128,18 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
 
   const handleQualityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const quality = e.target.value as 'low' | 'medium' | 'high';
-    // Set appropriate bitrate based on quality
-    let bitrate = 4000000; // default for medium
+
+    let bitrate = 4000000;
 
     switch (quality) {
       case 'low':
-        bitrate = 1000000; // 1 Mbps
+        bitrate = 1000000;
         break;
       case 'medium':
-        bitrate = 4000000; // 4 Mbps
+        bitrate = 4000000;
         break;
       case 'high':
-        bitrate = 8000000; // 8 Mbps
+        bitrate = 8000000;
         break;
     }
 

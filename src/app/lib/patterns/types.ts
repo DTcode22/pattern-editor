@@ -1,4 +1,3 @@
-// Define interface for parameters
 export interface PatternParams {
   speed: number;
   scale: number;
@@ -26,9 +25,7 @@ export interface PatternParams {
   eoMultiplier: number;
 }
 
-// Spiral pattern specific parameters
 export interface SpiralPatternParams {
-  // These parameters override the base ones in PatternParams
   xMax: number;
   yMax: number;
   xDivisor: number;
@@ -46,11 +43,9 @@ export interface SpiralPatternParams {
   eoMultiplier: number;
 }
 
-// Combined pattern parameters
 export type CombinedPatternParams = PatternParams &
   Partial<SpiralPatternParams>;
 
-// Video export options interface
 export interface VideoExportOptions {
   duration: number;
   fps: number;
@@ -58,5 +53,4 @@ export interface VideoExportOptions {
   quality: 'low' | 'medium' | 'high';
 }
 
-// Pattern types
-export type PatternType = 'vortex' | 'spiral'; // Add other patterns as needed
+export type PatternType = 'vortex' | 'spiral';
