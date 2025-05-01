@@ -76,7 +76,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-semibold">Phase & Distortion</h3>
+        <h3 className="font-semibold text-white text-center">
+          Phase & Distortion
+        </h3>
         <SliderControl
           label="Y Div Factor"
           paramKey="yDivFactor"
@@ -119,7 +121,7 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
       </div>
 
       <div className="space-y-3">
-        <h3 className="font-semibold">Scale</h3>
+        <h3 className="font-semibold text-white text-center">Scale</h3>
         <SliderControl
           label="X Scale"
           paramKey="xScale"

@@ -1,0 +1,30 @@
+{
+  "params": {
+    "speed": 1.1,
+    "scale": 0.9,
+    "intensity": 1,
+    "distortion": 10,
+    "xOffset": 190,
+    "yOffset": 32,
+    "dotSize": 1,
+    "xMax": 200,
+    "yMax": 200,
+    "step": 1,
+    "xDivisor": 10,
+    "xSubtractor": 10,
+    "yDivisor": 5.7,
+    "ySubtractor": 20,
+    "oBase": 5,
+    "oDivisor": 3,
+    "sinDivisor": 10,
+    "cosMultiplier": 5,
+    "xKMultiplier": 0,
+    "xScale": 0.1,
+    "koMultiplier": 5,
+    "yDivFactor": 0.4,
+    "yScale": 0.7,
+    "eoMultiplier": 1
+  },
+  "pattern": "vortex",
+  "timestamp": "2025-02-26T00:04:09.214Z"
+}

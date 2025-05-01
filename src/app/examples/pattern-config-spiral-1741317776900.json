@@ -1,0 +1,30 @@
+{
+  "params": {
+    "speed": 3,
+    "scale": 1.4,
+    "intensity": 1.5,
+    "distortion": 16.8,
+    "xOffset": 400,
+    "yOffset": 400,
+    "dotSize": 2,
+    "xMax": 30,
+    "yMax": 330,
+    "step": 0.7,
+    "xDivisor": 17.5,
+    "xSubtractor": 1,
+    "yDivisor": 26,
+    "ySubtractor": 19.5,
+    "oBase": 2,
+    "oDivisor": 7.5,
+    "sinDivisor": 2,
+    "cosMultiplier": 0.1,
+    "xKMultiplier": 4,
+    "xScale": 1.4,
+    "koMultiplier": 10,
+    "yDivFactor": 1,
+    "yScale": 0.7,
+    "eoMultiplier": 1
+  },
+  "pattern": "spiral",
+  "timestamp": "2025-03-07T03:22:56.899Z"
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useState, useCallback } from 'react';
+import React, { forwardRef, useState, useCallback, useEffect } from 'react';
 import usePatternRenderer from '../../hooks/usePatternRenderer';
 import { CombinedPatternParams, PatternType } from '../../lib/patterns/types';
 
@@ -8,14 +8,20 @@ interface PatternCanvasProps {
   params: CombinedPatternParams;
   patternType: PatternType;
   onParamChange?: (key: keyof CombinedPatternParams, value: number) => void;
+  initialZoom?: number;
 }
 
 const PatternCanvas = forwardRef<HTMLCanvasElement, PatternCanvasProps>(
-  ({ params, patternType, onParamChange }, ref) => {
-    const [zoom, setZoom] = useState(1);
+  ({ params, patternType, onParamChange, initialZoom = 1 }, ref) => {
+    const [zoom, setZoom] = useState(initialZoom);
     const canvasRef = usePatternRenderer(params, patternType, zoom);
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+    // Update zoom when initialZoom prop changes
+    useEffect(() => {
+      setZoom(initialZoom);
+    }, [initialZoom]);
 
     React.useImperativeHandle(
       ref,

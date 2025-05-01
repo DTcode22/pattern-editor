@@ -3,17 +3,9 @@
 import { useState, useRef } from 'react';
 import { VideoExportOptions } from '../../lib/patterns/types';
 import { defaultVideoOptions } from '../../lib/patterns/defaultParams';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Video } from 'lucide-react';
 
 interface VideoExportDialogProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -147,69 +139,48 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={isExporting}
-          title="Export Video"
+    <>
+      <div className="space-y-2">
+        <Label>Duration (seconds)</Label>
+        <Input
+          type="number"
+          min="1"
+          max="60"
+          value={videoOptions.duration}
+          onChange={handleDurationChange}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label>Frame Rate (FPS)</Label>
+        <select
+          value={videoOptions.fps}
+          onChange={handleFpsChange}
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
         >
-          <Video className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Export Video</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Duration (seconds)</Label>
-            <Input
-              type="number"
-              min="1"
-              max="60"
-              value={videoOptions.duration}
-              onChange={handleDurationChange}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Frame Rate (FPS)</Label>
-            <select
-              value={videoOptions.fps}
-              onChange={handleFpsChange}
-              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="15">15 FPS</option>
-              <option value="30">30 FPS</option>
-              <option value="60">60 FPS</option>
-              <option value="120">120 FPS</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label>Quality</Label>
-            <select
-              value={videoOptions.quality}
-              onChange={handleQualityChange}
-              className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            >
-              <option value="low">Low (1 Mbps)</option>
-              <option value="medium">Medium (4 Mbps)</option>
-              <option value="high">High (8 Mbps)</option>
-            </select>
-          </div>
-          <Button
-            onClick={exportVideo}
-            disabled={isExporting}
-            className="w-full"
-          >
-            {isExporting
-              ? `Exporting... ${Math.round(exportProgress)}%`
-              : 'Start Export'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+          <option value="15">15 FPS</option>
+          <option value="30">30 FPS</option>
+          <option value="60">60 FPS</option>
+          <option value="120">120 FPS</option>
+        </select>
+      </div>
+      <div className="space-y-2">
+        <Label>Quality</Label>
+        <select
+          value={videoOptions.quality}
+          onChange={handleQualityChange}
+          className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        >
+          <option value="low">Low (1 Mbps)</option>
+          <option value="medium">Medium (4 Mbps)</option>
+          <option value="high">High (8 Mbps)</option>
+        </select>
+      </div>
+      <Button onClick={exportVideo} disabled={isExporting} className="w-full">
+        {isExporting
+          ? `Exporting... ${Math.round(exportProgress)}%`
+          : 'Start Export'}
+      </Button>
+    </>
   );
 };
 

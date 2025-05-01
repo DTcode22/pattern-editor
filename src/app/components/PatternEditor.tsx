@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
-import { useRouter, usePathname } from 'next/navigation';
 import PatternCanvas from './patterns/PatternCanvas';
 import PatternControlsPanel from './controls/PatternControlsPanel';
 import PatternNavigation from './navigation/PatternNavigation';
@@ -13,37 +12,20 @@ import {
 } from '../lib/patterns/defaultParams';
 
 const PatternEditor: React.FC = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const getPatternTypeFromPath = (): PatternType => {
-    if (pathname.includes('/spiral')) return 'spiral';
-    return 'vortex';
-  };
-
-  const [selectedPattern, setSelectedPattern] = useState<PatternType>(
-    getPatternTypeFromPath()
-  );
-  const [params, setParams] = useState<CombinedPatternParams>(
-    selectedPattern === 'vortex'
-      ? defaultVortexParams
-      : { ...defaultVortexParams, ...defaultSpiralParams }
-  );
+  const [selectedPattern, setSelectedPattern] = useState<PatternType>('spiral');
+  const [params, setParams] = useState<CombinedPatternParams>({
+    ...defaultVortexParams,
+    ...defaultSpiralParams,
+  });
+  const [zoom, setZoom] = useState<number>(1);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    if (selectedPattern === 'vortex') {
-      router.push('/');
-    } else {
-      router.push(`/${selectedPattern}`);
-    }
-  }, [selectedPattern, router]);
-
   const handlePatternSelect = (pattern: PatternType) => {
-    if (pattern === selectedPattern) return;
-
+    // Always update the parameters even if the pattern type is the same
+    // This ensures we can switch back to default patterns
     setSelectedPattern(pattern);
+    setZoom(1); // Reset zoom to default when selecting a default pattern
 
     if (pattern === 'vortex') {
       setParams(defaultVortexParams);
@@ -75,10 +57,16 @@ const PatternEditor: React.FC = () => {
 
   const handleImport = (
     importedParams: CombinedPatternParams,
-    patternType: PatternType
+    patternType: PatternType,
+    newZoom?: number
   ) => {
     setParams(importedParams);
     setSelectedPattern(patternType);
+    if (newZoom) {
+      setZoom(newZoom);
+    } else {
+      setZoom(1); // Reset zoom to default if not specified
+    }
   };
 
   return (
@@ -103,6 +91,7 @@ const PatternEditor: React.FC = () => {
                 params={params}
                 patternType={selectedPattern}
                 onParamChange={handleParamChange}
+                initialZoom={zoom}
               />
             </ResizablePanel>
 
@@ -110,6 +99,7 @@ const PatternEditor: React.FC = () => {
               <PatternNavigation
                 selectedPattern={selectedPattern}
                 onSelectPattern={handlePatternSelect}
+                onSelectCustomPattern={handleImport}
               />
             </ResizablePanel>
           </ResizablePanelGroup>

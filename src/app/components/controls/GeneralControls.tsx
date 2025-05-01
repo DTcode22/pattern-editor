@@ -16,8 +16,11 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
   return (
     <div className="space-y-3">
       <h3 className="font-semibold text-white text-center">General</h3>
-      <p className="text-xs text-gray-500 mb-2 text-center">
+      <p className="text-xs text-gray-300 mb-2 text-center">
         Tip: Click and drag on the canvas to move the pattern position
+      </p>
+      <p className="text-xs text-gray-300 mb-2 text-center">
+        Scroll up/down for zoom
       </p>
       <SliderControl
         label="Speed"
