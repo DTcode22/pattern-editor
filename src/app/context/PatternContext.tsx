@@ -1,12 +1,18 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { PatternConfig, PatternType } from '../lib/patterns/types';
+import {
+  PatternConfig,
+  PatternType,
+  AllPatternParamKeys,
+  AudioMappingConfig,
+} from '../lib/patterns/types';
 import { patternRegistry } from '../lib/patterns/registry';
 
 type State = {
   patternConfig: PatternConfig;
   zoom: number;
+  mappings: Partial<Record<AllPatternParamKeys, AudioMappingConfig>>;
 };
 
 type Action =
@@ -17,7 +23,25 @@ type Action =
     }
   | { type: 'RESET_PATTERN' }
   | { type: 'LOAD_CONFIG'; payload: { config: PatternConfig; zoom?: number } }
-  | { type: 'SET_ZOOM'; payload: number };
+  | { type: 'SET_ZOOM'; payload: number }
+  | {
+      type: 'SET_MAPPING';
+      payload: {
+        param: AllPatternParamKeys;
+        config: AudioMappingConfig | null;
+      };
+    }
+  | {
+      type: 'UPDATE_MAPPING_CONFIG';
+      payload: {
+        param: AllPatternParamKeys;
+        config: Partial<AudioMappingConfig>;
+      };
+    }
+  | {
+      type: 'REPLACE_MAPPINGS';
+      payload: Partial<Record<AllPatternParamKeys, AudioMappingConfig>>;
+    };
 
 const patternReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -31,9 +55,9 @@ const patternReducer = (state: State, action: Action): State => {
             params: patternRegistry.vortex.defaultParams,
           },
           zoom: 1,
+          mappings: {},
         };
       } else {
-        // type === 'spiral'
         return {
           ...state,
           patternConfig: {
@@ -41,33 +65,26 @@ const patternReducer = (state: State, action: Action): State => {
             params: patternRegistry.spiral.defaultParams,
           },
           zoom: 1,
+          mappings: {},
         };
       }
     }
     case 'UPDATE_PARAM': {
       const { type, params } = state.patternConfig;
-
       if (type === 'vortex') {
         return {
           ...state,
           patternConfig: {
             type: 'vortex',
-            params: {
-              ...params,
-              [action.payload.key]: action.payload.value,
-            },
+            params: { ...params, [action.payload.key]: action.payload.value },
           },
         };
       } else {
-        // type === 'spiral'
         return {
           ...state,
           patternConfig: {
             type: 'spiral',
-            params: {
-              ...params,
-              [action.payload.key]: action.payload.value,
-            },
+            params: { ...params, [action.payload.key]: action.payload.value },
           },
         };
       }
@@ -81,28 +98,52 @@ const patternReducer = (state: State, action: Action): State => {
             type: 'vortex',
             params: patternRegistry.vortex.defaultParams,
           },
+          mappings: {},
         };
       } else {
-        // type === 'spiral'
         return {
           ...state,
           patternConfig: {
             type: 'spiral',
             params: patternRegistry.spiral.defaultParams,
           },
+          mappings: {},
         };
       }
     }
     case 'LOAD_CONFIG':
       return {
+        ...state,
         patternConfig: action.payload.config,
         zoom: action.payload.zoom || 1,
+        mappings: {},
       };
     case 'SET_ZOOM':
+      return { ...state, zoom: action.payload };
+    case 'SET_MAPPING': {
+      const newMappings = { ...state.mappings };
+      if (action.payload.config === null) {
+        delete newMappings[action.payload.param];
+      } else {
+        newMappings[action.payload.param] = action.payload.config;
+      }
+      return { ...state, mappings: newMappings };
+    }
+    case 'UPDATE_MAPPING_CONFIG': {
+      const { param, config } = action.payload;
+      const existingConfig = state.mappings[param];
+      if (!existingConfig) return state;
+
       return {
         ...state,
-        zoom: action.payload,
+        mappings: {
+          ...state.mappings,
+          [param]: { ...existingConfig, ...config },
+        },
       };
+    }
+    case 'REPLACE_MAPPINGS':
+      return { ...state, mappings: action.payload };
     default:
       return state;
   }
@@ -114,6 +155,7 @@ const initialState: State = {
     params: patternRegistry.spiral.defaultParams,
   },
   zoom: 1,
+  mappings: {},
 };
 
 const PatternStateContext = createContext<State | undefined>(undefined);

@@ -1,14 +1,33 @@
 'use client';
+
 import React from 'react';
 import SliderControl from './SliderControl';
-import { VortexPatternParams } from '../../lib/patterns/types';
+import {
+  VortexPatternParams,
+  AllPatternParamKeys,
+  AudioMappingConfig,
+} from '../../lib/patterns/types';
+
 interface VortexSpecificControlsProps {
   params: VortexPatternParams;
+  mappings: Partial<Record<AllPatternParamKeys, AudioMappingConfig>>;
   onChange: (key: string, value: number) => void;
+  onMappingChange: (
+    param: AllPatternParamKeys,
+    config: AudioMappingConfig | null
+  ) => void;
+  onMappingUpdate: (
+    param: AllPatternParamKeys,
+    config: Partial<AudioMappingConfig>
+  ) => void;
 }
+
 const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
   params,
+  mappings,
   onChange,
+  onMappingChange,
+  onMappingUpdate,
 }) => {
   return (
     <div className="space-y-5">
@@ -25,6 +44,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xDivisor}
           onChange={onChange}
+          currentMapping={mappings['xDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="x Subtractor"
@@ -35,6 +57,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xSubtractor}
           onChange={onChange}
+          currentMapping={mappings['xSubtractor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="y Divisor"
@@ -45,6 +70,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.yDivisor}
           onChange={onChange}
+          currentMapping={mappings['yDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="y Subtractor"
@@ -55,6 +83,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.ySubtractor}
           onChange={onChange}
+          currentMapping={mappings['ySubtractor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -68,6 +99,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.oBase}
           onChange={onChange}
+          currentMapping={mappings['oBase']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="o Divisor"
@@ -78,6 +112,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.oDivisor}
           onChange={onChange}
+          currentMapping={mappings['oDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -93,6 +130,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.sinDivisor}
           onChange={onChange}
+          currentMapping={mappings['sinDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="Cos Multiplier"
@@ -103,6 +143,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.cosMultiplier}
           onChange={onChange}
+          currentMapping={mappings['cosMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -116,6 +159,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xKMultiplier}
           onChange={onChange}
+          currentMapping={mappings['xKMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="x Scale"
@@ -126,6 +172,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xScale}
           onChange={onChange}
+          currentMapping={mappings['xScale']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="ko Multiplier"
@@ -136,6 +185,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.koMultiplier}
           onChange={onChange}
+          currentMapping={mappings['koMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -149,6 +201,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.yDivFactor}
           onChange={onChange}
+          currentMapping={mappings['yDivFactor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="y Scale"
@@ -159,6 +214,9 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.yScale}
           onChange={onChange}
+          currentMapping={mappings['yScale']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="eo Multiplier"
@@ -169,9 +227,13 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           isDecimal={true}
           value={params.eoMultiplier}
           onChange={onChange}
+          currentMapping={mappings['eoMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
     </div>
   );
 };
+
 export default VortexSpecificControls;

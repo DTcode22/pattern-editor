@@ -1,14 +1,33 @@
 'use client';
+
 import React from 'react';
 import SliderControl from './SliderControl';
-import { SpiralPatternParams } from '../../lib/patterns/types';
+import {
+  SpiralPatternParams,
+  AllPatternParamKeys,
+  AudioMappingConfig,
+} from '../../lib/patterns/types';
+
 interface SpiralSpecificControlsProps {
   params: SpiralPatternParams;
+  mappings: Partial<Record<AllPatternParamKeys, AudioMappingConfig>>;
   onChange: (key: string, value: number) => void;
+  onMappingChange: (
+    param: AllPatternParamKeys,
+    config: AudioMappingConfig | null
+  ) => void;
+  onMappingUpdate: (
+    param: AllPatternParamKeys,
+    config: Partial<AudioMappingConfig>
+  ) => void;
 }
+
 const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
   params,
+  mappings,
   onChange,
+  onMappingChange,
+  onMappingUpdate,
 }) => {
   return (
     <div className="space-y-5">
@@ -25,6 +44,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xDivisor}
           onChange={onChange}
+          currentMapping={mappings['xDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="X Subtractor"
@@ -35,6 +57,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xSubtractor}
           onChange={onChange}
+          currentMapping={mappings['xSubtractor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="Y Divisor"
@@ -45,6 +70,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.yDivisor}
           onChange={onChange}
+          currentMapping={mappings['yDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="Y Subtractor"
@@ -55,6 +83,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.ySubtractor}
           onChange={onChange}
+          currentMapping={mappings['ySubtractor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -68,6 +99,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.oDivisor}
           onChange={onChange}
+          currentMapping={mappings['oDivisor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -82,6 +116,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           step={1}
           value={params.yDivFactor}
           onChange={onChange}
+          currentMapping={mappings['yDivFactor']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="Cos Multiplier"
@@ -92,6 +129,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.cosMultiplier}
           onChange={onChange}
+          currentMapping={mappings['cosMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="KO Multiplier"
@@ -102,6 +142,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.koMultiplier}
           onChange={onChange}
+          currentMapping={mappings['koMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
         <SliderControl
           label="EO Multiplier (Phase)"
@@ -112,6 +155,9 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.eoMultiplier}
           onChange={onChange}
+          currentMapping={mappings['eoMultiplier']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
       <div className="space-y-3">
@@ -125,9 +171,13 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           isDecimal={true}
           value={params.xScale}
           onChange={onChange}
+          currentMapping={mappings['xScale']}
+          onMappingChange={onMappingChange}
+          onMappingUpdate={onMappingUpdate}
         />
       </div>
     </div>
   );
 };
+
 export default SpiralSpecificControls;

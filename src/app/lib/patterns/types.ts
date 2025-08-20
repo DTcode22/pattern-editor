@@ -1,7 +1,20 @@
-// src/app/lib/patterns/types.ts
 export type PatternType = 'vortex' | 'spiral';
 
-// Base parameters shared by all patterns
+export type AudioFeature = 'bass' | 'mids' | 'treble' | 'overall';
+
+export interface AudioData {
+  bass: number;
+  mids: number;
+  treble: number;
+  overall: number;
+}
+
+export interface AudioMappingConfig {
+  feature: AudioFeature;
+  sensitivity: number;
+  mode: 'additive' | 'multiplicative';
+}
+
 export interface BasePatternParams {
   speed: number;
   scale: number;
@@ -15,7 +28,6 @@ export interface BasePatternParams {
   step: number;
 }
 
-// Vortex-specific parameters
 export interface VortexPatternParams extends BasePatternParams {
   xDivisor: number;
   xSubtractor: number;
@@ -33,7 +45,6 @@ export interface VortexPatternParams extends BasePatternParams {
   eoMultiplier: number;
 }
 
-// Spiral-specific parameters
 export interface SpiralPatternParams extends BasePatternParams {
   xDivisor: number;
   xSubtractor: number;
@@ -47,7 +58,10 @@ export interface SpiralPatternParams extends BasePatternParams {
   eoMultiplier: number;
 }
 
-// A discriminated union for type-safe pattern configurations
+export type AllPatternParamKeys =
+  | keyof VortexPatternParams
+  | keyof SpiralPatternParams;
+
 export type PatternConfig =
   | {
       type: 'vortex';
@@ -76,7 +90,6 @@ export interface VideoExportOptions {
   quality: 'low' | 'medium' | 'high';
 }
 
-// Represents the structure of the imported/exported JSON file
 export interface PatternConfigFile {
   pattern: PatternType;
   params: AnyPatternParams;

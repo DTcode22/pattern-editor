@@ -1,12 +1,34 @@
 'use client';
+
 import React from 'react';
 import SliderControl from './SliderControl';
-import { AnyPatternParams } from '../../lib/patterns/types';
+import {
+  AnyPatternParams,
+  AllPatternParamKeys,
+  AudioMappingConfig,
+} from '../../lib/patterns/types';
+
 interface LoopControlsProps {
   params: AnyPatternParams;
+  mappings: Partial<Record<AllPatternParamKeys, AudioMappingConfig>>;
   onChange: (key: string, value: number) => void;
+  onMappingChange: (
+    param: AllPatternParamKeys,
+    config: AudioMappingConfig | null
+  ) => void;
+  onMappingUpdate: (
+    param: AllPatternParamKeys,
+    config: Partial<AudioMappingConfig>
+  ) => void;
 }
-const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
+
+const LoopControls: React.FC<LoopControlsProps> = ({
+  params,
+  mappings,
+  onChange,
+  onMappingChange,
+  onMappingUpdate,
+}) => {
   return (
     <div className="space-y-3">
       <h3 className="font-semibold text-white text-center">Loop Settings</h3>
@@ -18,6 +40,9 @@ const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
         step={5}
         value={params.xMax}
         onChange={onChange}
+        currentMapping={mappings['xMax']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
       <SliderControl
         label="Y Max"
@@ -27,6 +52,9 @@ const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
         step={5}
         value={params.yMax}
         onChange={onChange}
+        currentMapping={mappings['yMax']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
       <SliderControl
         label="Step"
@@ -36,8 +64,12 @@ const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
         step={0.1}
         value={params.step}
         onChange={onChange}
+        currentMapping={mappings['step']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
     </div>
   );
 };
+
 export default LoopControls;

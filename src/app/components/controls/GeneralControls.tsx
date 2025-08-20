@@ -1,14 +1,33 @@
 'use client';
+
 import React from 'react';
 import SliderControl from './SliderControl';
-import { AnyPatternParams } from '../../lib/patterns/types';
+import {
+  AnyPatternParams,
+  AllPatternParamKeys,
+  AudioMappingConfig,
+} from '../../lib/patterns/types';
+
 interface GeneralControlsProps {
   params: AnyPatternParams;
+  mappings: Partial<Record<AllPatternParamKeys, AudioMappingConfig>>;
   onChange: (key: string, value: number) => void;
+  onMappingChange: (
+    param: AllPatternParamKeys,
+    config: AudioMappingConfig | null
+  ) => void;
+  onMappingUpdate: (
+    param: AllPatternParamKeys,
+    config: Partial<AudioMappingConfig>
+  ) => void;
 }
+
 const GeneralControls: React.FC<GeneralControlsProps> = ({
   params,
+  mappings,
   onChange,
+  onMappingChange,
+  onMappingUpdate,
 }) => {
   return (
     <div className="space-y-3">
@@ -28,6 +47,9 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         isDecimal={true}
         value={params.speed}
         onChange={onChange}
+        currentMapping={mappings['speed']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
       <SliderControl
         label="Scale"
@@ -38,6 +60,9 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         isDecimal={true}
         value={params.scale}
         onChange={onChange}
+        currentMapping={mappings['scale']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
       <SliderControl
         label="Intensity"
@@ -48,6 +73,9 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         isDecimal={true}
         value={params.intensity}
         onChange={onChange}
+        currentMapping={mappings['intensity']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
       <SliderControl
         label="Distortion"
@@ -58,6 +86,9 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         isDecimal={true}
         value={params.distortion}
         onChange={onChange}
+        currentMapping={mappings['distortion']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
       <SliderControl
         label="Dot Size"
@@ -68,8 +99,12 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
         isDecimal={true}
         value={params.dotSize}
         onChange={onChange}
+        currentMapping={mappings['dotSize']}
+        onMappingChange={onMappingChange}
+        onMappingUpdate={onMappingUpdate}
       />
     </div>
   );
 };
+
 export default GeneralControls;

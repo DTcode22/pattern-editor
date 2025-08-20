@@ -1,4 +1,5 @@
 'use client';
+
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -15,6 +16,10 @@ import {
   usePatternDispatch,
 } from '../../context/PatternContext';
 import {
+  AllPatternParamKeys,
+  AudioMappingConfig,
+} from '../../lib/patterns/types';
+import {
   savePatternConfig,
   loadPatternConfig,
 } from '../../lib/patterns/fileUtils';
@@ -23,18 +28,43 @@ import GeneralControls from './GeneralControls';
 import LoopControls from './LoopControls';
 import SpiralSpecificControls from './SpiralSpecificControls';
 import VortexSpecificControls from './VortexSpecificControls';
+import AudioControls from './AudioControls';
+import { useAudioAnalyzer } from '@/app/hooks/useAudioAnalyzer';
+
 interface PatternControlsPanelProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  audioElementRef: React.RefObject<HTMLAudioElement | null>;
+  analyzer: ReturnType<typeof useAudioAnalyzer>;
 }
+
 const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
   canvasRef,
+  audioElementRef,
+  analyzer,
 }) => {
-  const { patternConfig } = usePatternState();
+  const { patternConfig, mappings } = usePatternState();
   const dispatch = usePatternDispatch();
+
   const handleParamChange = (key: string, value: number) => {
     dispatch({ type: 'UPDATE_PARAM', payload: { key, value } });
   };
+
+  const handleMappingChange = (
+    param: AllPatternParamKeys,
+    config: AudioMappingConfig | null
+  ) => {
+    dispatch({ type: 'SET_MAPPING', payload: { param, config } });
+  };
+
+  const handleMappingUpdate = (
+    param: AllPatternParamKeys,
+    config: Partial<AudioMappingConfig>
+  ) => {
+    dispatch({ type: 'UPDATE_MAPPING_CONFIG', payload: { param, config } });
+  };
+
   const handleReset = () => dispatch({ type: 'RESET_PATTERN' });
+
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -46,6 +76,7 @@ const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
     }
     event.target.value = '';
   };
+
   return (
     <div className="h-full bg-zinc-800">
       <ScrollArea className="h-full p-4">
@@ -97,37 +128,53 @@ const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
           </div>
         </div>
 
-        <div className="mb-4">
-          <h2 className="text-lg font-bold text-white">Parameters</h2>
-        </div>
         <div className="space-y-5">
+          <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
+            <AudioControls
+              audioElementRef={audioElementRef}
+              analyzer={analyzer}
+            />
+          </div>
+          <div className="mb-4">
+            <h2 className="text-lg font-bold text-white">Parameters</h2>
+          </div>
           <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
             <GeneralControls
               params={patternConfig.params}
+              mappings={mappings}
               onChange={handleParamChange}
+              onMappingChange={handleMappingChange}
+              onMappingUpdate={handleMappingUpdate}
             />
           </div>
           <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
             <LoopControls
               params={patternConfig.params}
+              mappings={mappings}
               onChange={handleParamChange}
+              onMappingChange={handleMappingChange}
+              onMappingUpdate={handleMappingUpdate}
             />
           </div>
-
           {patternConfig.type === 'vortex' && (
             <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
               <VortexSpecificControls
                 params={patternConfig.params}
+                mappings={mappings}
                 onChange={handleParamChange}
+                onMappingChange={handleMappingChange}
+                onMappingUpdate={handleMappingUpdate}
               />
             </div>
           )}
-
           {patternConfig.type === 'spiral' && (
             <div className="bg-white/10 backdrop-blur-xs rounded-lg p-4">
               <SpiralSpecificControls
                 params={patternConfig.params}
+                mappings={mappings}
                 onChange={handleParamChange}
+                onMappingChange={handleMappingChange}
+                onMappingUpdate={handleMappingUpdate}
               />
             </div>
           )}
@@ -145,4 +192,5 @@ const PatternControlsPanel: React.FC<PatternControlsPanelProps> = ({
     </div>
   );
 };
+
 export default PatternControlsPanel;
