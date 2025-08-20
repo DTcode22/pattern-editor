@@ -1,20 +1,16 @@
 'use client';
-
 import React from 'react';
 import { Slider } from '@/components/ui/slider';
-import { CombinedPatternParams } from '../../lib/patterns/types';
-
 interface SliderControlProps {
   label: string;
-  paramKey: keyof CombinedPatternParams;
+  paramKey: string;
   min: number;
   max: number;
   step: number;
   isDecimal?: boolean;
   value: number;
-  onChange: (key: keyof CombinedPatternParams, value: number) => void;
+  onChange: (key: string, value: number) => void;
 }
-
 const SliderControl: React.FC<SliderControlProps> = ({
   label,
   paramKey,
@@ -41,5 +37,4 @@ const SliderControl: React.FC<SliderControlProps> = ({
     </div>
   );
 };
-
 export default SliderControl;

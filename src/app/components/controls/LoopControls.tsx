@@ -1,14 +1,11 @@
 'use client';
-
 import React from 'react';
 import SliderControl from './SliderControl';
-import { CombinedPatternParams } from '../../lib/patterns/types';
-
+import { AnyPatternParams } from '../../lib/patterns/types';
 interface LoopControlsProps {
-  params: CombinedPatternParams;
-  onChange: (key: keyof CombinedPatternParams, value: number) => void;
+  params: AnyPatternParams;
+  onChange: (key: string, value: number) => void;
 }
-
 const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
   return (
     <div className="space-y-3">
@@ -43,5 +40,4 @@ const LoopControls: React.FC<LoopControlsProps> = ({ params, onChange }) => {
     </div>
   );
 };
-
 export default LoopControls;

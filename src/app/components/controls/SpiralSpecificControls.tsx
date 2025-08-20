@@ -1,14 +1,11 @@
 'use client';
-
 import React from 'react';
 import SliderControl from './SliderControl';
-import { CombinedPatternParams } from '../../lib/patterns/types';
-
+import { SpiralPatternParams } from '../../lib/patterns/types';
 interface SpiralSpecificControlsProps {
-  params: CombinedPatternParams;
-  onChange: (key: keyof CombinedPatternParams, value: number) => void;
+  params: SpiralPatternParams;
+  onChange: (key: string, value: number) => void;
 }
-
 const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
   params,
   onChange,
@@ -60,7 +57,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">o Calculation</h3>
         <SliderControl
@@ -74,7 +70,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">
           Phase & Distortion
@@ -119,7 +114,6 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">Scale</h3>
         <SliderControl
@@ -136,5 +130,4 @@ const SpiralSpecificControls: React.FC<SpiralSpecificControlsProps> = ({
     </div>
   );
 };
-
 export default SpiralSpecificControls;

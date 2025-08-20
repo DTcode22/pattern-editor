@@ -1,14 +1,11 @@
 'use client';
-
 import React from 'react';
 import SliderControl from './SliderControl';
-import { CombinedPatternParams } from '../../lib/patterns/types';
-
+import { VortexPatternParams } from '../../lib/patterns/types';
 interface VortexSpecificControlsProps {
-  params: CombinedPatternParams;
-  onChange: (key: keyof CombinedPatternParams, value: number) => void;
+  params: VortexPatternParams;
+  onChange: (key: string, value: number) => void;
 }
-
 const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
   params,
   onChange,
@@ -60,7 +57,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">o Calculation</h3>
         <SliderControl
@@ -84,7 +80,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">
           Distortion Factors
@@ -110,7 +105,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">px Calculation</h3>
         <SliderControl
@@ -144,7 +138,6 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
           onChange={onChange}
         />
       </div>
-
       <div className="space-y-3">
         <h3 className="font-semibold text-white text-center">py Calculation</h3>
         <SliderControl
@@ -181,5 +174,4 @@ const VortexSpecificControls: React.FC<VortexSpecificControlsProps> = ({
     </div>
   );
 };
-
 export default VortexSpecificControls;

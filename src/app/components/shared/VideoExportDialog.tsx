@@ -1,17 +1,14 @@
 'use client';
-
 import { useState, useRef } from 'react';
 import { VideoExportOptions } from '../../lib/patterns/types';
-import { defaultVideoOptions } from '../../lib/patterns/defaultParams';
+import { defaultVideoOptions } from '../../lib/patterns/constants';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-
 interface VideoExportDialogProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   patternType: string;
 }
-
 const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
   canvasRef,
   patternType,
@@ -21,7 +18,6 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-
   const exportVideo = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -109,18 +105,14 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
       setIsExporting(false);
     }
   };
-
   const handleFpsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setVideoOptions({ ...videoOptions, fps: Number(e.target.value) });
   };
-
   const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVideoOptions({ ...videoOptions, duration: Number(e.target.value) });
   };
-
   const handleQualityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const quality = e.target.value as 'low' | 'medium' | 'high';
-
     let bitrate = 4000000;
 
     switch (quality) {
@@ -137,7 +129,6 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
 
     setVideoOptions({ ...videoOptions, quality, bitrate });
   };
-
   return (
     <>
       <div className="space-y-2">
@@ -183,5 +174,4 @@ const VideoExportDialog: React.FC<VideoExportDialogProps> = ({
     </>
   );
 };
-
 export default VideoExportDialog;

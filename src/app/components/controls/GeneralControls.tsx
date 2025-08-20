@@ -1,14 +1,11 @@
 'use client';
-
 import React from 'react';
 import SliderControl from './SliderControl';
-import { CombinedPatternParams } from '../../lib/patterns/types';
-
+import { AnyPatternParams } from '../../lib/patterns/types';
 interface GeneralControlsProps {
-  params: CombinedPatternParams;
-  onChange: (key: keyof CombinedPatternParams, value: number) => void;
+  params: AnyPatternParams;
+  onChange: (key: string, value: number) => void;
 }
-
 const GeneralControls: React.FC<GeneralControlsProps> = ({
   params,
   onChange,
@@ -75,5 +72,4 @@ const GeneralControls: React.FC<GeneralControlsProps> = ({
     </div>
   );
 };
-
 export default GeneralControls;

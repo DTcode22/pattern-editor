@@ -1,4 +1,8 @@
-export interface PatternParams {
+// src/app/lib/patterns/types.ts
+export type PatternType = 'vortex' | 'spiral';
+
+// Base parameters shared by all patterns
+export interface BasePatternParams {
   speed: number;
   scale: number;
   intensity: number;
@@ -9,6 +13,10 @@ export interface PatternParams {
   xMax: number;
   yMax: number;
   step: number;
+}
+
+// Vortex-specific parameters
+export interface VortexPatternParams extends BasePatternParams {
   xDivisor: number;
   xSubtractor: number;
   yDivisor: number;
@@ -25,9 +33,8 @@ export interface PatternParams {
   eoMultiplier: number;
 }
 
-export interface SpiralPatternParams {
-  xMax: number;
-  yMax: number;
+// Spiral-specific parameters
+export interface SpiralPatternParams extends BasePatternParams {
   xDivisor: number;
   xSubtractor: number;
   yDivisor: number;
@@ -37,14 +44,30 @@ export interface SpiralPatternParams {
   cosMultiplier: number;
   koMultiplier: number;
   xScale: number;
-  step: number;
-  xOffset: number;
-  yOffset: number;
   eoMultiplier: number;
 }
 
-export type CombinedPatternParams = PatternParams &
-  Partial<SpiralPatternParams>;
+// A discriminated union for type-safe pattern configurations
+export type PatternConfig =
+  | {
+      type: 'vortex';
+      params: VortexPatternParams;
+    }
+  | {
+      type: 'spiral';
+      params: SpiralPatternParams;
+    };
+
+export type AnyPatternParams = VortexPatternParams | SpiralPatternParams;
+
+export interface RenderPattern<T extends AnyPatternParams> {
+  (
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    params: T,
+    time: number
+  ): void;
+}
 
 export interface VideoExportOptions {
   duration: number;
@@ -53,4 +76,9 @@ export interface VideoExportOptions {
   quality: 'low' | 'medium' | 'high';
 }
 
-export type PatternType = 'vortex' | 'spiral';
+// Represents the structure of the imported/exported JSON file
+export interface PatternConfigFile {
+  pattern: PatternType;
+  params: AnyPatternParams;
+  timestamp: string;
+}
